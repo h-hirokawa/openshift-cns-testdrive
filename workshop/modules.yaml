@@ -31,8 +31,6 @@ modules:
     name: ■ クラスタリソースのクォータ
   taints-and-tolerations:
     name: ■ Taint と Toleration
-  windows-containers:
-    name: ■ Windows コンテナ
   acs-vulnerability:
     name: ■ ACSによる脆弱性のスキャン
   acs-devsecops:
