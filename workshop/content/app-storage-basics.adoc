@@ -27,6 +27,14 @@ OpenShiftの *Pod* がデータベースをホストするなど、信頼性の�
 writableなレイヤーは、コンテナが削除されると破棄されます。これは動的なコンテナオーケストレーション環境では普通に起きることです。
 ====
 
+
+前のラボで使用した `app-management` プロジェクトに入っているはずです。確認するために、次のコマンドを実行します。
+
+[source,bash,role="execute"]
+----
+oc project app-management
+----
+
 OpenShiftに外部の永続ストレージを表す `PersistentVolume` オブジェクトを作成し、それをコンテナのファイルシステム内に *Mount* するよう指示する方法を以下に示します。
 
 [source,bash,role="execute"]

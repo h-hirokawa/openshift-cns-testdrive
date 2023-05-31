@@ -514,6 +514,7 @@ watch 'oc get pod -n openshift-monitoring'
 ----
 oc get pod -w -n openshift-monitoring
 ----
+kbd:[Ctrl+C]を押すと終了できます。
 
 ## Logging
 OpenShiftのログ集約ソリューションはデフォルトではインストールされていません。

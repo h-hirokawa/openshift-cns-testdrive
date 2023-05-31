@@ -1,143 +1,105 @@
 = Advanced Cluster Management for Kubernetes - RHACM
 
-== Working with Clusters and Cluster Lifecycle
-
-At a high level Cluster Lifecycle management is about creating, upgrading, and destroying and importing clusters in a multi cloud environment.
+== クラスターとクラスターライフサイクルの操作
 
 クラスターのライフサイクル管理は、マルチクラウド環境におけるクラスターの作成、アップグレード、破壊とインポートを高いレベルで行うものです。
 
-In the demo console where you have all the credentials, you will find the *ACM Hub URL, Username and Password, AWS credentials*, *Access Key ID*, *Secret Access Key*, and the *Base DNS Domain*.
+本ワークショップ用のガイダンスページで、*ACM HubのURL*、*ユーザー名とパスワード*、*AWSの認証情報* 、*Access Key ID*  、*Secret Access Key ID*、*Base DNS Domain* を確認しておきます。
 
-すべての認証情報を持つデモコンソールで、*ACM HubのURL*、*ユーザー名とパスワード*、*AWSの認証情報* 、*アクセスキーID*  、*秘密のアクセスキー*、*ベースDNSドメイン* を確認します。
+*ACM HubのURL* から *ユーザー名とパスワード* を使用してACMにログインした後、*Credentials menu* に移動し、*Add Credentials* を選択します。
 
-Once you have logged in to ACM, Navigate to *Credentials menu* and then select *Add Credentials*
+=== 接続のための詳細情報の作成
 
-ACMにログインした後、*Credentials menu* に移動し、*Add Credentials* を選択します。
-
-=== You will need to provide connection details:
-
-* Cloud Provider Credentials: Choose *Amazon Web Services* +
+* Cloud Provider Credentials: *Amazon Web Services* を選びます。
 * Credential Name:  `aws`
 * Namespace: `open-cluster-management`
-* Base DNS Domain:  この情報は、デモコンソールの *rhacm_aws_subdomain* というフィールドの下にあります。
+* Base DNS Domain:  この情報は、本ワークショップ用のガイダンスページの *rhacm_aws_subdomain* というフィールドの下にあります。 
 
-When copy and pasting this information, make sure you omit the dot on the url, for example it should read `sandbox1536.opentlc.com`  not `.sandbox1536.opentlc.com` 
+この情報をコピー＆ペーストする場合、URLのドットを必ず省略してください。例えば、`.sandbox1536.opentlc.com` ではなく、`sandbox1536.opentlc.com` と記述します。
 
-この情報をコピー＆ペーストする場合、URLのドットを必ず省略してください。例えば、`.sandbox1536.opentlc.com`ではなく、`sandbox1536.opentlc.com`と記述します。
+* NEXTをクリックします。
 
-* Click NEXT
+* Access Key ID: この情報は、本ワークショップ用のガイダンスページの *rhacm_aws_access_key_id* というフィールドの下にあります。
 
-* Access Key ID: This information is located on the demo console under the field *rhacm_aws_access_key_id*
+* Secret Access Key ID: この情報は、本ワークショップ用のガイダンスページの *rhacm_aws_secret_key* というフィールドの下にあります。
 
-この情報は、デモコンソールの *rhacm_aws_access_key_id* というフィールドの下にあります。
+* NEXTをクリックします。 
 
-* Secret Access Key ID: This information is located on the demo console under the field *rhacm_aws_secret_key*
-
-この情報は、デモコンソールの *rhacm_aws_secret_key* というフィールドの下にあります。
-
-* Click NEXT - We don't need to configure a Proxy so we can skip this screen
 Proxyを設定する必要はないので、この画面は省略できます
 
-* Click NEXT
+* NEXTをクリックします。
 
-* Red Hat OpenShift pull secret: cloud.redhat.comから pull secretを取得します。RH loginが必要になります。 https://cloud.redhat.com/openshift/install/pull-secret[Get the pull secret from cloud.redhat.com - RH login Required]
+* Red Hat OpenShift pull secret: https://cloud.redhat.com/openshift/install/pull-secret[cloud.redhat.com] から pull secretを取得します。RH loginが必要になります。 
 
-* SSH private and public keys:  Use an existing key pair or https://docs.openshift.com/container-platform/4.9/installing/installing_aws/installing-aws-default.html#ssh-agent-using_installing-aws-default[generate a new ssh key]
+* SSH private and public keys: 
+既存のキーペアを使用するか、次のドキュメントを参照して
+https://docs.openshift.com/container-platform/4.9/installing/installing_aws/installing-aws-default.html#ssh-agent-using_installing-aws-default[新しいsshキーを生成]します。
 
-既存のキーペアを使用するか、https://docs.openshift.com/container-platform/4.9/installing/installing_aws/installing-aws-default.html#ssh-agent-using_installing-aws-defaultを参照して[新しいsshキーを生成する]。
+> これらのキーを取得するには、*console.redhat.com* へのアクセスが必要な場合があることに注意してください。
 
-> Please note you might need *console.redhat.com* access to get these keys
+* NEXTをクリックします。
 
-これらのキーを取得するには、*console.redhat.com* へのアクセスが必要な場合があることに注意してください。
+* 情報を確認し、*ADD* をクリックします。
 
-* Click NEXT
+== AWSに新しいOpenShiftクラスターを作成する。
 
-* Verify the information and click *ADD*
+* メニューから *Infrastructure → Clusters* を選びます。
+* *Create Cluster* をクリックします。
+* *Amazon Web services* を選択します。
+* *Infrastructure provider credential* は先程作成した *AWS* を選択します。
+* NEXTをクリックします
+* *cluster name* に名前を入力します。
+* *Cluster set* は空にしておきます。
+* *Release Image* を選択します。 chose a 4.9 version
+* *environment=prod* ラベルを付与します。
+* NEXTをクリックします
 
-情報を確認し、*ADD*をクリックします。
-
-== Create a new OpenShift cluster in AWS
-
-
-* From the menu select *Infrastructure → Clusters*
-* Click *Create Cluster*
-* Select *Amazon Web services*
-* Select the *Infrastructure provider credential* *AWS*
-* Click NEXT
-* Add the desired *cluster name*.
-* Leave the *Cluster set empty for now*
-* Select a *Release Image*, chose a 4.9 version
-* Add a label of *environment=prod*
-* Click NEXT
-
-Change the region to *see table below*
-
-リージョンを *下表参照* して変更します。
+リージョンを *下表を参照* して変更します。
 
 |===
-|Your Location | AWS Region to select
-|*NORTH AMERICA*|Select *us-west-1* or *us-west-2*
+|ロケーション | 選択するAWS Region
+|*NORTH AMERICA*|*us-west-1* または *us-west-2*
 
-|*EUROPE / EMEA*|Select *eu-west-2* or *eu-west-3*
-|*ASIA PACIFIC*|Select *ap-southeast-2* or *ap-northeast-2* or *ap-east-1*
+|*EUROPE / EMEA*|*eu-west-2* または *eu-west-3*
+|*ASIA PACIFIC*|*ap-southeast-2* または *ap-northeast-2* または *ap-east-1*
 |===
-
-* Click NEXT on the other screens or select *7 - Review* on the menu and then click *CREATE*
 
 * 他の画面でNEXTをクリックするか、メニューから *7 - Review* を選択し、*CREATE* をクリックします。
 
-_This process takes about 30 to 40 minutes depending on AWS traffic at the time this course is taken. Make sure you monitor for any failures and address as needed_
-
 _このプロセスは、本コース受講時のAWSのトラフィックに応じて、約30～40分かかります。失敗がないか必ずモニタし、必要に応じて対処してください_。
 
-== Creating a Single Node Cluster (SNO) in AWS
-
-AWSでシングルノードクラスター（SNO）を作成する。
-
-While we wait for the main cluster to provision, lets go ahead and provision a Single Node Cluster. In this exercise we will show you how to create a single node cluster (OCP 4.8 and Above required) in order to save some time and resources when building clusters for testing.
+== AWSでシングルノードクラスター（SNO）を作成する。
 
 メインクラスタのプロビジョニングを待つ間に、シングルノードクラスタのプロビジョニングを進めてみましょう。この演習では、テスト用のクラスタを構築する際の時間とリソースを節約するために、シングルノードクラスタを作成する方法を紹介します（OCP 4.8 以上が必要です）。
 
-*Please NOTE* that provisioning SNO clusters in public clouds is not currently supported, we only support SNO clusters as bare metal, we leverage the public cloud in the example below to showcase the functionality only.
+*Please NOTE：* SNOクラスターはベアメタルのみサポートし、パブリッククラウドは現在サポートされていません。以下の例では、機能を紹介するためにパブリッククラウドを活用しています。
 
-*Please NOTE* SNOクラスターはベアメタルのみサポートし、パブリッククラウドは現在サポートされていません。
-以下の例では、機能を紹介するためにパブリッククラウドを活用しています。
+* メニューから *Infrastructure → Clusters* を選びます。
+* *Create Cluster* をクリックします。
+* *Amazon Web services* を選択します。
+* *Infrastructure provider credential* は先程作成した *AWS* を選択します。
+* NEXTをクリックします
+* *cluster name* に名前を入力します。
+* *Cluster set* は空にしておきます。
+* *Release Image* を選択します。 chose a 4.9 version
+* *environment=qa* ラベルを付与します。
+* NEXTをクリックします
 
-* From the menu select *Infrastructure → Clusters*
-* Click *Create Cluster*
-* Select *Amazon Web services*
-* Select the *Infrastructure provider credential*  *AWS*
-* Click NEXT
-* Add the desired cluster name. Leave the Cluster set empty for now
-* Select a *Release Image*, chose a *OCP 4.9 version*
-* Add a label of *environment=qa*
-* Click NEXT
-
-* Change the region to *see table below*
-
-リージョンを *下表参照* して変更します。
+リージョンを *下表を参照* して変更します。
 
 |===
-|Your Location | AWS Region to select
-|*NORTH AMERICA*|Select *us-west-1* or *us-west-2*
+|ロケーション | 選択するAWS Region
+|*NORTH AMERICA*|*us-west-1* または *us-west-2*
 
-|*EUROPE / EMEA*|Select *eu-west-2* or *eu-west-3*
-|*ASIA PACIFIC*|Select *ap-southeast-2* or *ap-northeast-2* or *ap-east-1*
+|*EUROPE / EMEA*|*eu-west-2* または *eu-west-3*
+|*ASIA PACIFIC*|*ap-southeast-2* または *ap-northeast-2* または *ap-east-1*
 |===
 
-* Expand the *Worker Pools*, and change the worker node count to 0
+* *Worker Pools* を展開し、Worker Node Countを 0 に変更します。
 
-* *Worker Pools* を展開し、Worker Node Countを0に変更します。
+* ステップ 7をクリックし、レビューする *前に*、画面上部の *YAML.* をONにします。
 
-* Click on step 7 to Review *before* proceeding, turn *YAML: ON at the top of the screen.*
-
-* ステップ7をクリックし、レビューする *前に*、画面上部の *YAML.* をONにします。
-
-* Click on *install-config* in the YAML window pane and *change the master replica number to 1* (will likely be 3).  Double check that the worker replica is 0.
-
-* YAMLウィンドウペインの *install-config* をクリックし、マスターレプリカの数を1に変更します（おそらく3になっています）。 ワーカーレプリカが0であることをダブルチェックします。
-
-* Click on *cluster* in the YAML window pane and locate the section that defines an object of type: *kind: MachinePool*. Add the following line at the end of the *MachinePool* section.
+* YAMLウィンドウペインの *install-config* をクリックし、マスターレプリカの数を 1 に変更します（おそらく 3 になっています）。 ワーカーレプリカが 0 であることをダブルチェックします。
 
 * YAMLウィンドウペインで *cluster* をクリックし、タイプ *kind: kind：MachinePool* オブジェクトを定義しているセクションを見つけます。*MachinePool* セクションの末尾に以下の行を追加します。
 
@@ -145,258 +107,148 @@ While we wait for the main cluster to provision, lets go ahead and provision a S
   skipMachinePools: true
 ----
 
-Be sure the new line is at the same indentation as the previous line.
+追加した行が前の行と同じインデントであることを確認してください。
 
-新しい行が前の行と同じインデントであることを確認してください。
-
-* Click on “*Create*” and the single node cluster creation will go through.
-
-* *Create*をクリックすると、シングルノードクラスターの作成が実行されます。
-
-_This process takes about 10 to 20 minutes depending on AWS traffic at the time this course is taken. Make sure you monitor for any failures and address as needed_
+* *Create* をクリックすると、シングルノードクラスターの作成が実行されます。
 
 _このプロセスは、本コース受講時のAWSのトラフィックに応じて、約10～20分かかります。失敗がないか必ずモニタし、必要に応じて対処してください_。
 
-== Creating and Managing Applications with Red Hat Advanced Cluster Management For Kubernetes
+== Red Hat Advanced Cluster Management For Kubernetesによるアプリケーションの作成と管理
 
-Red Hat Advanced Cluster Management For Kubernetesによるアプリケーションの作成と管理
+前のラボでは、RHACM の Cluster Lifecycle 機能を学習しました。これにより、新しい OpenShift® クラスターを作成し、アプリケーションのデプロイに使用することができました。
 
+RHACMのアプリケーションライフサイクル機能は、管理対象クラスタ上のアプリケーションリソースを管理するために使用されるプロセスを提供します。これにより、Kubernetesの仕様を使用して単一、または複数クラスタのアプリケーションを定義することができ、個々のクラスタへのリソースの展開とライフサイクル管理の自動化が追加されます。
 
-In the previous lab, you explored the Cluster Lifecycle functionality in RHACM. This allowed you to create new OpenShift® clusters, which you can now use to deploy applications.
-
-前のラボでは、RHACM の Cluster Lifecycle 機能を探りました。これにより、新しい OpenShift® クラスターを作成し、アプリケーションのデプロイに使用することができました。
-
-
-Application Lifecycle functionality in RHACM provides the processes that are used to manage application resources on your managed clusters. This allows you to define a single or multi-cluster application using Kubernetes specifications, but with additional automation of the deployment and lifecycle management of resources to individual clusters. An application designed to run on a single cluster is straightforward and something you ought to be familiar with from working with OpenShift fundamentals. A multi-cluster application allows you to orchestrate the deployment of these same resources to multiple clusters, based on a set of rules you define for which clusters run the application components.
-
-RHACMのアプリケーションライフサイクル機能は、管理対象クラスタ上のアプリケーションリソースを管理するために使用されるプロセスを提供します。これにより、Kubernetesの仕様を使用して単一または複数クラスタのアプリケーションを定義することができますが、個々のクラスタへのリソースの展開とライフサイクル管理の自動化が追加されます。単一クラスタ上で実行するように設計されたアプリケーションは簡単で、OpenShiftの基本的な作業から慣れ親しんでいるはずのものです。マルチクラスターアプリケーションでは、アプリケーションコンポーネントを実行するクラスターについて定義した一連のルールに基づいて、複数のクラスターへの同じリソースのデプロイメントをオーケストレーションすることができます。
-
-This table describes the different components that the Application Lifecycle model in RHACM is composed of:
+単一クラスタ上で実行するように設計されたアプリケーションは簡単で、OpenShiftの基本的な作業から慣れ親しんでいるはずのものです。マルチクラスターアプリケーションでは、アプリケーションコンポーネントを実行するクラスターについて定義した一連のルールに基づいて、複数のクラスターへの同じリソースのデプロイメントをオーケストレーションすることができます。
 
 この表は、RHACM のアプリケーションライフサイクルモデルが構成するさまざまなコンポーネントを説明するものです。
 
 |===
-|*Resource*|*Purpose *
+|*Resource* | *Purpose*
 
-|Channel|Defines a place where deployable resources are stored, such as an object store, Kubernetes namespace, Helm repository, or GitHub repository.
+|Channel|オブジェクトストア、Kubernetesネームスペース、Helmリポジトリ、GitHubリポジトリなど、デプロイ可能なリソースが格納される場所を定義します。
 
-オブジェクトストア、Kubernetesネームスペース、Helmリポジトリ、GitHubリポジトリなど、デプロイ可能なリソースが格納される場所を定義します。
+|Subscription|Channelリソースで利用可能な、ターゲットクラスタにデプロイされるデプロイ可能なリソースを識別する定義。
 
-|Subscription|Definitions that identify deployable resources available in a Channel resource that are to be deployed to a target cluster.
-チャネルリソースで利用可能な、ターゲットクラスタにデプロイされるデプロイ可能なリソースを識別する定義。
+|PlacementRule|Subscriptionがアプリケーションをデプロイして維持するターゲットクラスターを定義します。Subscriptionリソースで特定されたKubernetesリソースで構成され、Channelリソースで定義された場所から引き出されます。
 
-|PlacementRule|Defines the target clusters where subscriptions deploy and maintain the application. It is composed of Kubernetes resources identified by the Subscription resource and pulled from the location defined in the Channel resource.
-
-サブスクリプションがアプリケーションをデプロイして維持するターゲットクラスターを定義します。Subscriptionリソースで特定されたKubernetesリソースで構成され、Channelリソースで定義された場所から引き出されます。
-
-|Application|A way to group the components here into a more easily viewable single resource. An Application resource typically references a Subscription resource.
-
-コンポーネントをより見やすく1つのリソースにグループ化する方法です。アプリケーションリソースは、通常、サブスクリプションリソースを参照します。
+|Application|コンポーネントをより見やすく1つのリソースにグループ化する方法です。アプリケーションリソースは、通常、Subscriptionリソースを参照します。
 
 |===
 
+これらはすべて、RHACMのインストール時に作成される、CRD（Custom Resource Definition）によって定義されたKubernetesカスタムリソースです。これらをKubernetesのネイティブオブジェクトとして作成することで、Podと同じように対話することができます。例えば、+oc get application+ を実行すると、+oc get pods+ がデプロイされたPodのリストを取得するのと同様に、デプロイされたRHACMアプリケーションのリストが取得されます。
 
-These are all Kubernetes custom resources, defined by a Custom Resource Definition (CRD), that are created for you when RHACM is installed. By creating these as Kubernetes native objects, you can interact with them the same way you would with a Pod. For instance, running +oc get application+ retrieves a list of deployed RHACM applications just as +oc get pods+ retrieves a list of deployed Pods.
+これは、実際にアプリケーションを構成するdeployablesに加えて、管理する余分なリソースが多いように思えるかもしれません。しかし、多くのクラスタにデプロイする場合、アプリケーションの構成、配置、および全体的な制御を自動化することが可能になります。1つのクラスタであれば、ログインして +oc create -f...+ を実行するのは簡単ですが、それを何十ものクラスタで行う必要がある場合、ミスやクラスタの欠落がないようにしたいですし、アプリケーションの更新をスケジュールしてオーケストレーションする方法が必要です。RHACMのApplication Lifecycle Builderを活用することで、マルチクラスタのアプリケーションを簡単に管理することができます。
 
-これらはすべて、RHACMのインストール時に作成される、CRD（Custom Resource Definition）によって定義されたKubernetesカスタムリソースです。これらをKubernetesのネイティブオブジェクトとして作成することで、Podと同じように対話することができます。例えば、+oc get application+を実行すると、+oc get pods+がデプロイされたPodのリストを取得するのと同様に、デプロイされたRHACMアプリケーションのリストが取得されます。
+== アプリケーションを作成する
 
-This may seem like a lot of extra resources to manage in addition to the deployables that actually make up your application. However, they make it possible to automate the composition, placement, and overall control of your applications when you are deploying to many clusters. With a single cluster, it is easy to log in and run +oc create -f…​.+ If you need to do that on a dozen clusters, you want to make sure you do not make a mistake or miss a cluster, and you need a way to schedule and orchestrate updates to your applications. Leveraging the Application Lifecycle Builder in RHACM allows you to easily manage multi-cluster applications.
+前提条件:
 
-これは、実際にアプリケーションを構成するデプロイアブルに加えて、管理する余分なリソースが多いように思えるかもしれません。しかし、多くのクラスタにデプロイする場合、アプリケーションの構成、配置、および全体的な制御を自動化することが可能になります。1つのクラスタであれば、ログインして +oc create -f...+ を実行するのは簡単ですが、それを何十ものクラスタで行う必要がある場合、ミスやクラスタの欠落がないようにしたいですし、アプリケーションの更新をスケジュールしてオーケストレーションする方法が必要です。RHACMのApplication Lifecycle Builderを活用することで、マルチクラスタのアプリケーションを簡単に管理することができます。
-
-== Creating an Application
-
-アプリケーションを作成する
-
-Prerequisites:
-
-* Navigate to *Infrastructure → Clusters*
-* Click on the *local-cluster*
-
-*local-cluster*をクリックします。
-
-* Click the *edit* button under *Labels* and add a *label* : `environment=dev`
-
-*Labels* の下の　*edit* ボタンをクリックして`environment=dev`というラベルを追加します。
-
-
-* Verify the new clusters you build have the correct labels, it should be as follows:
-
-構築した新しいクラスタに正しいラベルが貼られていることを確認します。
+* *Infrastructure → Clusters* に移動します。
+* *local-cluster* をクリックします。
+* *Labels* の下の *edit* ボタンをクリックして`environment=dev`というラベルを追加します。
+* 構築した新しいクラスタに正しいラベルが貼られていることを確認します。
 ** *Local-Cluster* - `environment=dev`
 ** *AWS 1st Cluster* - `environment=prod`
 ** *AWS 2nd Cluster* - `environment=qa`
 
-* Navigate to *Applications*
-* Click *Create application, select Subscription*. Enter the following information:
-
+* *Applications* に移動します。
+* *Create application, select Subscription* をクリックし次の情報を入力します。
 ** *Name*: `book-import`
 ** *Namespace*: `book-import`
-
-** Under repository types, select the *GIT* repository
-
-リポジトリの種類で、*GIT* リポジトリを選択します。
+** リポジトリの種類で、*GIT* リポジトリを選択します。
 ** *URL:*  https://github.com/hichammourad/book-import.git[https://github.com/hichammourad/book-import.git]
 ** *Branch*:  `master-no-pre-post`
 ** *Path:*  `book-import`
 
-* Verify that *Deploy application resources only on clusters matching specified labels* is selected and enter the following information
-
-*指定したラベルに一致するクラスタにのみアプリケーションリソースを配置する* が選択されていることを確認し、次の情報を入力します。
-
+* *Deploy application resources only on clusters matching specified labels* が選択されていることを確認し、次の情報を入力します。
 ** *Label*: `environment`
 ** *Value*: `dev`
 
-* Verify all the information is correct. Click *Create*
-すべての情報が正しいことを確認します。*Create* をクリックします。
+* すべての情報が正しいことを確認します。*Create* をクリックします。
 
-It will take a few minutes to deploy the application, *Click* on the *Topology* view and verify that *all of the check marks are green*.
+アプリケーションのデプロイに数分かかりますので、*Topology* ビューをクリックして *すべてのチェックマークが緑色であること* を確認してください。
 
-アプリケーションのデプロイに数分かかりますので、*Topology* ビューをクリックしてすべてのチェックマークが緑色であることを確認してください。
-
-Under the topology view, Select the *Route* and click on the *Launch Route* *URL*, this will take you to the Book Import application with several books available.
-
-トポロジービューで、*Route* を選択し、*Launch Route* *URL* をクリックすると、いくつかのブックが利用可能なブックインポートアプリケーションが表示されます。
-
-Feel free to experiment with the application.  Edit it and change the label to `environment=prod`.  What happens to the application?
+トポロジービューで、*Route* を選択し、*Launch Route* *URL* をクリックすると、ブックインポートアプリケーションが表示されます。
 
 このアプリケーションを自由に試してみてください。 
 編集して、ラベルを `environment=prod` に変えてみてください。 アプリケーションはどうなりますか？
 
-You have now completed the overview of the *Application Lifecycle functionality in RHACM.*
-
-これでRHACMのアプリケーション・ライフサイクル機能の概要は完了です。
-
-You successfully deployed an application to a target cluster using RHACM. This approach leveraged a Git repository which housed all of the manifests that defined your application. RHACM was able to take those manifests and use them as deployables, which were then deployed to the target cluster.
+これで *Application Lifecycle functionality in RHACM.* の概要は完了です。
 
 RHACMを使用してターゲットクラスタにアプリケーションを正常にデプロイしました。このアプローチでは、アプリケーションを定義するすべてのマニフェストが格納された Git リポジトリを活用しました。RHACMはこれらのマニフェストを受け取り、それらをdeployableとして使用し、ターゲットクラスタにデプロイすることができました。
 
-You also leverage the power of labels and deploy the application to your imported cluster. I highly encourage you to play around with the labels and deploy this application to your local cluster. You can also create other clusters and or applications if you so desire.
-
 また、ラベルの力を活用し、インポートしたクラスタにアプリケーションをデプロイすることもできます。ぜひ、ラベルで遊んでみて、このアプリケーションをローカル・クラスターにデプロイしてみてください。また、必要に応じて、他のクラスタやアプリケーションを作成することもできます。
 
-== Governance, Risk, and Compliance (Security and compliance use case)
+== Governance, Risk, and Compliance（セキュリティとコンプライアンスのユースケース）
 
-ガバナンス・リスク・コンプライアンス（セキュリティとコンプライアンスのユースケース）
-
-=== Creating Policies in ACM
-
-ACMでポリシーを作成する
-
-At this point, you have completed the overview labs for Cluster Lifecycle and Application Lifecycle capabilities in RHACM. In the Cluster Lifecycle Lab, you learned how RHACM can help manage the lifecycles of your Kubernetes clusters, including both deploying new clusters and importing existing clusters. In that lab, you created new clsters and used your RHACM instance to manage them.
+=== ACMでポリシーを作成する
 
 この時点で、RHACM の Cluster Lifecycle と Application Lifecycle 機能の概要ラボを終了しています。クラスターライフサイクルラボでは、新しいクラスターのデプロイと既存のクラスターのインポートの両方を含め、RHACMがKubernetesクラスターのライフサイクルを管理するのに役立つ方法を学びました。そのラボでは、新しいクラスタを作成し、RHACMインスタンスを使用してそれらを管理しました。
 
-In the Application Lifecycle Lab, you continued exploring RHACM functionality and learned how to deploy and configure an application. You used the cluster that you added in the first module as the target for deploying an application.
-
-アプリケーション・ライフサイクル・ラボでは、RHACM の機能を引き続き検討し、アプリケーションの展開と構成方法を学びました。アプリケーションのデプロイ先として、最初のワークショップモジュールで追加したクラスタを使用しました。
-
-Now that you have a cluster and a deployed application, you need to make sure that they do not drift from their original configurations. This kind of drift is a serious problem, because it can happen from benign and benevolent fixes and changes, as well as malicious activities that you might not notice but can cause significant problems. The solution that RHACM provides for this is the Governance, Risk, and Compliance, or GRC, functionality.
+アプリケーション・ライフサイクル・ラボでは、RHACM の機能を引き続き探索し、アプリケーションの展開と構成方法を学びました。アプリケーションのデプロイ先として、最初のワークショップモジュールで追加したクラスタを使用しました。
 
 クラスタとデプロイされたアプリケーションを手に入れたら、それらが元の構成からドリフトしないことを確認する必要があります。このようなドリフトは、良心的で善良な修正や変更だけでなく、気づかないかもしれないが重大な問題を引き起こす悪意のある活動からも起こりうるため、深刻な問題です。これを解決するためにRHACMが提供するのが、Governance, Risk, and Compliance、つまりGRCの機能です。
 
-==== Review GRC Functionality
+==== GRC機能のレビュー
 
-GRC機能のレビュー
-
-To begin, it is important to define exactly what GRC is. In RHACM, you build policies that are applied to managed clusters. These policies can do different things, which are described below, but they ultimately serve to govern the configurations of your clusters. This governance over your cluster configurations reduces risk and ensures compliance with standards defined by stakeholders, which can include security teams and operations teams
-
-はじめに、GRCとは何かを正確に定義しておくことが重要です。RHACMでは、管理対象のクラスタに適用されるポリシーを構築します。これらのポリシーは、後述するようにさまざまなことを行うことができますが、最終的にはクラスタの構成を管理するためのものです。クラスタ構成に対するこのガバナンスは、リスクを低減し、セキュリティチームや運用チームなどの利害関係者が定義した標準へのコンプライアンスを保証します。
-
-This table describes the three types of policy controllers available in RHACM along with the remediation mode they support:
+はじめに、GRCとは何かを正確に定義しておくことが重要です。RHACMでは、管理対象のクラスタに適用されるポリシーを構築します。これらのポリシーは、後述するようにさまざまなことを行うことができますが、最終的にはクラスタの構成を管理するためのものです。クラスタ構成に対するこのgovernanceは、riskを低減し、セキュリティチームや運用チームなどの利害関係者が定義した標準へのcomplianceを保証します。
 
 この表は、RHACM で利用可能な 3 種類のポリシーコントローラと、それらがサポートする修復モードについて説明したものです。
 
 |===
-|*Policy Controller*|*Purpose*|*Enforce or Inform*
+|*Policy Controller*| *Purpose* |*Enforce or Inform*
 
-|Configuration|Used to configure any Kubernetes resource across your clusters. Where these resources are created or configured is determined by the namespaces you include (or exclude) in the policy.
-クラスタ全体で任意のKubernetesリソースを構成するために使用されます。これらのリソースが作成または設定される場所は、ポリシーに含める（または除外する）ネームスペースによって決定されます。|Both
+|Configuration|クラスタ全体で任意のKubernetesリソースを構成するために使用されます。これらのリソースが作成または設定される場所は、ポリシーに含める（または除外する）ネームスペースによって決定されます。|Both
 
-|Certificate|Used to detect certificates that are close to expiring. You can configure the certificate policy controller by updating the minimum duration parameter in your controller policy. When a certificate expires in less than the minimum duration, the policy becomes noncompliant. Certificates are identified from secrets in the included namespaces.
-期限切れ間近の証明書を検出するために使用します。コントローラポリシーの最小期間パラメータを更新することで、証明書ポリシーコントローラを構成することができます。証明書の有効期限が最小期間未満になると、ポリシーは非準拠となります。証明書は、含まれるネームスペースのsecretsから識別されます。|Inform
+|Certificate|期限切れ間近の証明書を検出するために使用します。コントローラポリシーの最小期間パラメータを更新することで、証明書ポリシーコントローラを構成することができます。証明書の有効期限が最小期間未満になると、ポリシーは非準拠となります。証明書は、含まれるネームスペースのsecretsから識別されます。|Inform
 
-|Identity and Access Management (IAM)|Used to receive notifications about IAM policies that are noncompliant. In the 1.0 version of RHACM, this checks for compliance with the number of cluster administrators you allow in your cluster.    
-コンプライアンス違反の IAM ポリシーに関する通知を受け取るために使用します。RHACMの1.0バージョンでは、クラスタで許可するクラスタ管理者の数が遵守されているかどうかをチェックするものです。|inform
+|Identity and Access Management (IAM)|コンプライアンス違反の IAM ポリシーに関する通知を受け取るために使用します。RHACMの1.0バージョンでは、クラスタで許可するクラスタ管理者の数が遵守されているかどうかをチェックするものです。|inform
 
 |===
-
-You need to create three different resources in order to implement the policy controllers:
 
 ポリシーコントローラーを実装するために、3種類のリソースを作成する必要があります。
 
 |===
 |*Resource*|*Function*
 
-|Policy|The Policy defines what you actually want to check and possibly configure (with enforce). Policies include a policy-template which defines a list of objectDefinitions. The policy also determines the namespaces it is applied to, as well as the remediation actions it takes.
-Policyは、実際にチェックし、設定したい内容を定義します（enforceを使用）。ポリシーには、objectDefinition のリストを定義する policy-template が含まれます。また、ポリシーは、適用されるネームスペースと、実行される修復アクションを決定します。
-|Placement Rule|Identifies a list of managed clusters that are targeted when using this PlacementRule.
-このPlacementRuleを使用する際に対象となる管理対象クラスタのリストを識別します。
-|PlacementBinding|Connect the policy to the PlacementRule.
-PlacementRuleにポリシーを接続します。
+|Policy|Policyは、実際にチェックし、設定したい内容を定義します（enforceを使用）。ポリシーには、objectDefinition のリストを定義する policy-template が含まれます。また、ポリシーは、適用されるネームスペースと、実行される修復アクションを決定します。
+|Placement Rule|このPlacementRuleを使用する際に対象となる管理対象クラスタのリストを識別します。
+|PlacementBinding|PlacementRuleにポリシーを接続します。
 |===
 
 
-This is a complex topic, and this course is only providing an overview. Please consult the https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.5/html-single/governance/index#governance[GRC product documentation] for more details on any of these policy controllers.
-
-これは複雑なトピックであり、このコースは概要を提供するに過ぎません。これらのポリシーコントローラの詳細については[GRC製品ドキュメント]を参照してください。
-
-* Navigate to the *Governance* screen and click *create policy.*
+これは複雑なトピックであり、このコースは概要を提供するに過ぎません。これらのポリシーコントローラの詳細については https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.5/html-single/governance/index#governanc[GRC製品ドキュメント] を参照してください。
 
 * *Governance* 画面に移動し、*create policy* をクリックします。
 
-* Navigate to the https://github.com/stolostron/policy-collection/tree/main/stable/CM-Configuration-Management[GitHub Repo] with all the policies and select the https://github.com/stolostron/policy-collection/blob/main/stable/SC-System-and-Communications-Protection/policy-etcdencryption.yaml[Etcd Encryption]
+* すべてのポリシーを含む https://github.com/stolostron/policy-collection/tree/main/stable/CM-Configuration-Management[GitHub Repo]に移動し、 https://github.com/stolostron/policy-collection/blob/main/stable/SC-System-and-Communications-Protection/policy-etcdencryption.yaml[Etcd Encryption] を選択します。
 
-すべてのポリシーを含む [GitHub Repo]に移動し、[Etcd Encryption]を選択します。
+* *ETCD Encryption Policy* 上で、*RAW* ボタンをクリックします。
 
-* On the *ETCD Encryption Policy* click the *RAW* button on the policy.
+* RAW YAMLをコピーします。
 
-*ETCD Encryption Policy* 上で、*RAW* ボタンをクリックします。
-
-* Copy the raw YAML.
-
-YAMLをコピーします。
-
-* Under the *Create Policy* screen, enable the *YAML*. Copy and Paste the *RAW YAML* from the GitHub Repo
-
-*Create Policy* の画面で、*YAML* を有効にします。GitHub Repoから *RAW YAML* をコピーして貼り付けます。
+* *Create Policy* の画面で、*YAML* を有効にします。GitHub Repoから *RAW YAML* をコピーして貼り付けます。
 
 * *Namespace*: `default`
 
-* Click on Step 5 and verify that everything looks correct.
+* *ステップ5* をクリックし、すべてが正しいことを確認します。
 
-ステップ5をクリックし、すべてが正しいことを確認します。
+* *Submit* をクリックします。
 
-* Click Submit.
-
-Submitをクリックします。
-
-Navigate to the Results screen, allow the scan to complete, it shouldn't take more than 3 minutes.
-
-結果画面に移動し、スキャンが完了するのを待ちます。3分以上かかることはありません。
-
-
-Once complete notice the violations you have, since we created this policy as a Inform only it will not fix any of the violations, lets go ahead and fix them
+結果画面に移動し、スキャンが完了するのを待ちます。_3分以上かかることはありません_
 
 このポリシーは、Inform（情報提供）のみで作成されているため、違反の修正はできませんが、先に進んで修正しましょう。
 
-* On the top of the policy click on the *Actions → Edit Policy*
-ポリシーの上部で、*Actions → Edit Policy* をクリックします
+* ポリシーの上部で、*Actions → Edit Policy* をクリックします
 
-* Select *Step 2* and change the Remediation to *Enforce*
-*ステップ2* を選択し、Remediationを *Enforce* に変更します。
+* *ステップ2* を選択し、Remediationを *Enforce* に変更します。
 
-* Select *Step 5* review that is under Remediation is set to *Enforce*
-*ステップ5* "Remediation "が "Enforce "に設定されているかレビューを選択します
+* *ステップ5* を選択し Remediationが *Enforce* に設定されているか確認します。
 
-* Click *Submit*
-*Submit* をクリックします。
+* *Submit* をクリックします。
 
-Navigate to the Results screen, allow the remediation to complete, _it shouldn't take more than 3 minutes_
+結果画面に移動し、修復が完了するのを待ちます。 _3分以上かかることはありません_
 
-結果画面に移動し、修復が完了するのを待ちます（3分以上かかることはありません）。
-
-Now you have succesfully created a Policy to scan your clusters, if you would like to play with other policies please visit the https://github.com/stolostron/policy-collection[Policy Repo] for more Policies you can test out.
-
-これで、クラスタをスキャンするためのポリシーが作成できました。他のポリシーを試してみたい場合は、https://github.com/stolostron/policy-collection[Policy Repo]にアクセスしてください。
+これで、クラスタをスキャンするためのポリシーが作成できました。他のポリシーを試してみたい場合は、 https://github.com/stolostron/policy-collection[Policy Repo] にアクセスしてください。
 

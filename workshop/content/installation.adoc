@@ -173,7 +173,7 @@ oc get clusterversion
 ----
 
 以下のような出力が表示されます。
-（バージョンの4.9.zzのzzの部分は異なる場合があります）
+（バージョンの4.xx.zzのzzの部分は異なる場合があります）
 
 ----
 NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS

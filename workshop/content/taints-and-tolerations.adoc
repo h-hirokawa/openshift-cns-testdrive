@@ -70,6 +70,8 @@ oc describe nodes -l 'node-role.kubernetes.io/worker,!node-role.kubernetes.io/in
 oc get nodes -l 'node-role.kubernetes.io/worker,!node-role.kubernetes.io/infra,!cluster.ocs.openshift.io/openshift-storage' -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | xargs -I{} oc label node {} appnode=welcome-php
 ----
 
+ノードにラベルを付けるには、ノード名をkey=valueのペアで渡します。例：oc label node worker.example.com appnode=welcome-php
+
 ノードの名前をメモしながら、ノードがラベル付けされていることを確認します。
 
 [source,bash,role="execute"]
@@ -118,7 +120,7 @@ oc delete pods --all
 oc rollout status deploy welcome-php
 ----
 
-Pod が作業員に均等に広がっていることを確認してください。各ノードに1つの Pod があるはずです。
+Pod がworkerに均等に広がっていることを確認してください。各ノードに1つの Pod があるはずです。
 
 [source,bash,role="execute"]
 ----
@@ -162,6 +164,7 @@ Pod が均等に広がるようにするには、`oc delete pods --all` を何�
 この演習では、インフラ・ノードでもストレージ・ノードではない最初のノードを `welcome-php=run:NoSchedule` で Taint します。 
 これにより、すべての新しいPod(適切な Toleration を持たないものは)は、このノードでスケジューリングされないようになります。
 
+構文は　oc adm taint node ${nodename} key=value:Effect　です。
 
 [source,bash,role="execute"]
 ----

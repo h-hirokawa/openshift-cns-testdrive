@@ -21,7 +21,7 @@ Kubernetesの `NetworkPolicy` により、OpenShiftのSDN内でProject間のネ�
 oc project default
 ----
 
-### 生成スクリプトの実行 Execute the Creation Script
+### 生成スクリプトの実行
 **Project**またはクラスタ管理権限を持つユーザーのみが、**Project**のネットワークを操作できます。
 
 それでは、用意されているスクリプトを実行しましょう。
@@ -66,7 +66,7 @@ ose-1-vj2gn    1/1     Running     0          30s
 
 `netproj-b` **Project**内の Pod の TCP ポート 5000 に接続するために、`netproj-a` **Project**内の Pod からコマンドを実行します。
 
-### 接続性のテスト #1 (should work)
+### 接続性のテスト #1 (動作するはず)
 いくつかの**Project**と Pod ができたので、`netproj-a` **Project**の Pod と `netproj-b` **Project**の Pod の接続性をテストしてみましょう。
 
 2つの Pod 間の接続性をテストするには、次のコマンドを実行します。:
@@ -108,7 +108,7 @@ spec:
   ingress: []
 ----
 
-`podSelector` が空であることに注意してください。これは、このNetworkPolicyがプロジェウト内の全ての Pod に適用される事を意味しています。
+`podSelector` が空であることに注意してください。これは、このNetworkPolicyがプロジェクト内の全ての Pod に適用される事を意味しています。
 
 また、`ingress` リストが空である事に注意してください。これは、この `NetworkPolicy` CR において、許可された `ingress` ルールが存在しない事を意味しています。
 
@@ -119,7 +119,7 @@ spec:
 oc create -n netproj-b -f {{ HOME_PATH }}/support/network-policy-block-all.yaml
 ----
 
-### 接続性のテスト #2 (should fail)
+### 接続性のテスト #2 (失敗する)
 全ての接続を遮断する `NetworkPolicy` CR が適用されたため、`netproj-a` *Project* の *Pod* と`netproj-b` **Project**の Pod 間の接続がブロックされるようになりました。
 
 次のコマンドでテストを行います。:
@@ -195,7 +195,7 @@ spec:
 oc create -n netproj-b -f {{ HOME_PATH }}/support/network-policy-allow-all-from-netproj-a.yaml
 ----
 
-### 接続性のテスト #3 (should work again)
+### 接続性のテスト #3 (再び成功するはず)
 "5000番ポートの `netproj-a` からのアクセスを許可する" という NetworkPolicy が適用されているので、`netproj-a` **Project**内の Pod と、`netproj-b` **Project**内の Pod の接続性は再び許可されるはずです。
 
 次を実行する事でテストします。:

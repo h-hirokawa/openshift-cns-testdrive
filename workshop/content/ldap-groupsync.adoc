@@ -149,8 +149,31 @@ LDAP IDプロバイダを設定するには、以下を行う必要がありま�
 
 [source,bash,role="execute"]
 ----
+oc login -u kubeadmin -p {{ KUBEADMIN_PASSWORD }}
+----
+
+次のコマンドは、openshift-config ネームスペースに ldap-secret という名前の Kubernetes Secretを、1つのデータアイテムで作成します。データアイテムは "bindPassword" という名前で、その値は "b1ndP^ssword" に設定されています。
+
+[source,bash,role="execute"]
+----
 oc create secret generic ldap-secret --from-literal=bindPassword=b1ndP^ssword -n openshift-config
-wget https://ssl-ccp.godaddy.com/repository/gd-class2-root.crt -O {{ HOME_PATH }}/support/ca.crt
+----
+
+次のコマンドで、証明書をダウンロードし 'ca.crt' というファイルに保存します。
+
+[source,bash,role="execute"]
+----
+wget https://certs.godaddy.com/repository/gd-class2-root.crt -O {{ HOME_PATH }}/support/ca.crt
+----
+
+----
+もし、`Unable to establish SSL connection.` と表示された場合は、上記のコマンドを再度クリックしてから先に進んでください。
+----
+
+次のコマンドをクリックすると、openshift-config ネームスペースに ca-config-map という名前の新しい ConfigMap が作成されます。このConfigMapには、{{ HOME_PATH }}/support/ca.cltというファイルの内容が入力されます。そして、そのファイルを適用します。
+
+[source,bash,role="execute"]
+----
 oc create configmap ca-config-map --from-file={{ HOME_PATH }}/support/ca.crt -n openshift-config
 oc apply -f {{ HOME_PATH }}/support/oauth-cluster.yaml
 ----
@@ -159,6 +182,13 @@ oc apply -f {{ HOME_PATH }}/support/oauth-cluster.yaml
 ====
 `apply` を使うのは既存の `OAuth` オブジェクトがあるためです。もし `create` を使用した場合、オブジェクトが既に存在しているというエラーが発生するでしょう。`apply` でも警告が表示されますが、それは問題ありません。
 ====
+
+これにより、oAuth Operatorの再デプロイが開始されます。次のコマンドでロールアウトを監視することができます。
+
+[source,bash,role="execute"]
+----
+oc rollout status deployment/oauth-openshift -n openshift-authentication
+----
 
 #### LDAPグループをOpenShiftグループに同期する
 OpenShiftでは、グループを使用してユーザを管理し、複数のユーザの権限を一度に制御することができます。LDAPでグループを同期する方法については、link:https://docs.openshift.com/container-platform/4.10/authentication/ldap-syncing.html[Syncing LDAP groups
@@ -472,7 +502,9 @@ prometheus-k8s-openshift-monitoring.{{ ROUTE_SUBDOMAIN }}
 ====
 インストーラは、デフォルトでPrometheus用の`Route`を設定しています。
 link:https://prometheus-k8s-openshift-monitoring.{{ ROUTE_SUBDOMAIN }}[Prometheus Link]
-をcontrol+クリックしてブラウザで開きます。ログイン画面が出てきたら *Log in with OpenShift* ボタンをクリックして `ldap auth` を選択し、先ほど `cluster-reader` 権限を付与した `fancyuser1` ユーザを使用します。より細かく言えば、`ose-fancy-dev` グループに `cluster-reader` 権限があり、`fancyuser1` がメンバーです。これらのユーザのパスワードはすべて `openshift` です。自己署名証明書のため、証明書エラーが出ると思います。必ず承諾するようにしましょう。
+をcontrol+クリックしてブラウザで開きます。ログイン画面が出てきたら *Log in with OpenShift* ボタンをクリックして `ldap` auth を選択し、先ほど `cluster-reader` 権限を付与した `fancyuser1` ユーザを使用します。
+
+より細かく言えば、`ose-fancy-dev` グループに `cluster-reader` 権限があり、`fancyuser1` がメンバーです。これらのユーザのパスワードはすべて `Op#nSh1ft` です。自己署名証明書のため、証明書エラーが出ると思います。必ず承諾するようにしましょう。
 
 ログインすると、最初にauthプロキシのパーミッションの承認画面が表示されます。
 

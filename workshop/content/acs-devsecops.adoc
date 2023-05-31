@@ -1,107 +1,67 @@
 
-= DevSecOps and Policy Enforcement with Red Hat Advanced Cluster Security
+= Red Hat Advanced Cluster SecurityによるDevSecOpsとポリシーエンフォースメント
 
-Red Hat Advanced Cluster SecurityによるDevSecOpsとポリシーエンフォースメント。
+== OpenShift Pipelinesを使ってRed Hat Advanced Cluster Security for Kubernetesを自動化する
 
-== Using OpenShift Pipelines to Automate Red Hat Advanced Cluster Security for Kubernetes
-
-OpenShift Pipelinesを使ってRed Hat Advanced Cluster Security for Kubernetesを自動化する。
-
-=== Introduction
-
-はじめに
-
-This workshop will discuss how OpenShift Pipelines, based on the Tekton open source project, can be used to automate the execution of Red Hat Advanced Cluster Security for Kubernetes as part of a more comprehensive continuous integration solution. The objective is to bring into the continuous integration process the validation of Kubernetes resources such that any violations against defined policy can be addressed earlier in the development life cycle. 
+=== はじめに
 
 本ワークショップでは、TektonオープンソースプロジェクトをベースとしたOpenShift Pipelinesを使用して、より包括的な継続的インテグレーションソリューションの一部としてRed Hat Advanced Cluster Security for Kubernetesの実行を自動化する方法を説明します。その目的は、Kubernetesリソースの検証を継続的インテグレーションプロセスに導入し、定義されたポリシーに対する違反があれば、開発ライフサイクルの早い段階で対処できるようにすることにあります。
 
-== Pipeline Requirements and Necessary Features
+== パイプラインの要件と必要な機能
 
-パイプラインの要件と必要な機能
+=== RHACSコマンドラインインターフェース
 
-=== RHACS Command Line Interface
-
-Red Hat Advanced Cluster Security for Kubernetes has a command line interface (roxctl) for evaluating images and resources against policy definitions held on the RHACS server. The command line interface may be downloaded from the RHACS web user interface for ad-hoc use, and in the automation steps presented here, roxctl is downloaded from the RHACS server during each execution of the analysis. This ensures that the correct version matching the server is always used.
-
-Red Hat Advanced Cluster Security for Kubernetesには、RHACSサーバーに保持されているポリシー定義に対してイメージやリソースを評価するためのコマンドラインインターフェイス（roxctl）があります。コマンドラインインターフェイスは、アドホックに使用するためにRHACSウェブユーザーインターフェイスからダウンロードすることができ、ここで紹介する自動化ステップでは、分析の各実行中にRHACSサーバーからroxctlがダウンロードされます。これにより、サーバーと一致する正しいバージョンが常に使用されることが保証されます。
+Red Hat Advanced Cluster Security for Kubernetesには、RHACSサーバーに保持されているポリシー定義に対してイメージやリソースを評価するためのコマンドラインインターフェイス *roxctl* があります。コマンドラインインターフェイスは、アドホックに使用するためにRHACSウェブユーザーインターフェイスからダウンロードすることができ、ここで紹介する自動化ステップでは、分析の各実行中にRHACSサーバーからroxctlがダウンロードされます。これにより、サーバーと一致する正しいバージョンが常に使用されることが保証されます。
 
 
-=== roxctl Analysis Options
-
-The roxctl command line interface has several options for resource and image analysis. Of particular interest in this blog is the "deployment" option, which is traditionally used to check for deployment readiness of Kubernetes resources. By using this option during the build phase of development, teams can get a much earlier indication of deployment issues rather than waiting until deployment time. This enables teams to fix the problems during development, lowering costs and leading to smoother deployments.
+=== roxctl 分析オプション
 
 roxctlコマンドラインインターフェイスには、リソースやイメージの解析のためのオプションがいくつか用意されています。特に注目しているのはdeploymentオプションで、従来はKubernetesリソースのデプロイ準備状況を確認するために使用されていました。開発のビルド段階でこのオプションを使用することで、チームはデプロイ時期まで待つのではなく、より早い段階でデプロイの問題を把握することができます。これにより、チームは開発中に問題を修正することができ、コストを削減し、よりスムーズなデプロイメントにつなげることができます。
 
 
-=== Continuous Integration and roxctl Process
-
-継続的インテグレーションとroxctlプロセス
-
-The CI process in the example below takes advantage of the tasks, skeleton pipeline, and pipeline run resources that users can build into their own wider OpenShift Pipelines process. The resources and their interaction are shown in figure 1:
-
+=== 継続的インテグレーションとroxctlプロセス
 以下の例のCIプロセスは、ユーザーが独自の広範囲のOpenShift Pipelinesプロセスに構築できるタスク、スケルトンパイプライン、およびパイプライン実行リソースを利用しています。リソースとそれらの相互作用を図 1 に示します。
 
 image::images/tekton-1.png[]
 
-_Figure 1: OpenShift Pipeline process_ +
+_図 1: OpenShift Pipeline process_ +
 
-=== Pipeline Run Resource
-
-The OpenShift Pipelines "pipeline run" resource calls the pipeline resource, passing with it the required parameters. Some of the parameters are highlighted in figure 1 above, and all are described in the table below. The pipeline run defines a workspace on a 10 Mb persistent volume claim called "files," to which the source assets are cloned, and the results files are written. If you wish to add the tasks described here to an existing OpenShift Pipelines process, add the parameter definitions and the workspace volume to your existing pipeline run.
+=== Pipeline Run リソース
 
 OpenShift Pipelines の "pipeline run" リソースは、必要なパラメータを渡して、パイプラインリソースを呼び出します。パラメータの一部は上の図1で強調表示されており、すべてのパラメータは下の表で説明されています。パイプラインの実行では、"files"という10MBの永続的なボリュームにワークスペースを定義し、そこにソースアセットをクローンし、結果ファイルが書き込まれます。ここで説明するタスクを既存のOpenShift Pipelinesプロセスに追加したい場合は、パラメータ定義とワークスペース・ボリュームを既存のパイプライン・ランに追加してください。
 
 |===
 |Parameter|Description|Used by task
 
-|acs_central_endpoint|The name of a secret that contains the URL of the RHACS central server.|Resource deployment check
+|acs_central_endpoint|RHACS セントラルサーバーの URL を含むシークレットの名前です。|Resource deployment check
 
-RHACS セントラルサーバーの URL を含むシークレットの名前です。
+|acs_api_token|RHACS Web ユーザーインターフェース内で生成されたアクセストークンを含むシークレットの名前です。 https://help-internal.stackrox.com/docs/integrate-with-other-tools/integrate-with-ci-systems/#configure-access[ここ] で説明されている、継続的インテグレーションアクセストークンです。|Resource deployment check
 
-|acs_api_token|The name of a secret that contains the access token generated within the RHACS web user interface. This is a continuous integration access token as described https://help-internal.stackrox.com/docs/integrate-with-other-tools/integrate-with-ci-systems/#configure-access[here].|Resource deployment check
+|上記2つのパラメータは、両方のデータ項目を含む1つのシークレットを参照することができます。||
 
-RHACS Web ユーザーインターフェース内で生成されたアクセストークンを含むシークレットの名前です。ここで説明されている、継続的インテグレーションアクセストークンです。
+|git-url|検証対象のリソースを含む GitHub リポジトリの URL です。|Git clone workspace
 
-|The above two parameters can reference a single secret containing both data items.||
+|git-revision|コンテンツをチェックアウトするために使用する識別子。(branch、tag、sha、ref...)|Git clone workspace
 
-上記2つのパラメータは、両方のデータ項目を含む1つのシークレットを参照することができます。
+|file-location-in-git-repo|検査するリソースを含むディレクトリ。|Resource deployment check
 
-|git-url|The URL of the GitHub repository that contains the resources to be validated.|Git clone workspace
-
-検証対象のリソースを含む GitHub リポジトリの URL です。
-
-|git-revision|The identifier to be used to check out the content. (branch, tag, sha, ref…)|Git clone workspace
-
-コンテンツをチェックアウトするために使用する識別子。(branch、tag、sha、ref...)
-
-|file-location-in-git-repo|The directory containing the resources to be examined.|Resource deployment check
-
-検査するリソースを含むディレクトリ。
-
-|recursive-search|If 'true,' the above path will be searched recursively for all files with the extension yaml or yml.|Resource deployment check
+|recursive-search|`true` の場合、上記のパスは、拡張子がyamlまたはymlのすべてのファイルに対して再帰的に検索されます。|Resource deployment check
 |===
 
-trueの場合、上記のパスは、拡張子がyamlまたはymlのすべてのファイルに対して再帰的に検索されます。
 
-=== Pipeline Resource
 
-The OpenShift Pipelines "pipeline" resource in the GitHub repository mentioned above orchestrates the execution of the tasks and the passing of parameters between tasks. Further information on the pipeline use is given in the section "Making a decision based on the scan result."
+=== Pipeline リソース
 
-前述のGitHubリポジトリにあるOpenShift Pipelinesの「pipeline」リソースが、タスクの実行とタスク間のパラメータの受け渡しをオーケストレーションしています。パイプラインの使い方については、「スキャン結果に基づく意思決定」の項で詳しく解説しています。
+前述のGitHubリポジトリにあるOpenShift Pipelinesの"pipeline"リソースが、タスクの実行とタスク間のパラメータの受け渡しをオーケストレーションしています。パイプラインの使い方については、「スキャン結果に基づく意思決定」の項で詳しく解説しています。
 
-== Workshop Setup
+== Workshopセットアップ
 
-=== Deploy the Pipeline Assets
+=== Pipelineアセットをデプロイする
 
-The assets described below are available in a public GitHub repository https://github.com/mfosterrox/demo.git. To deploy the assets, run the following:
-
-以下に説明するアセットは、GitHubの公開リポジトリ（https://github.com/mfosterrox/demo.git）で入手できます。アセットをデプロイするには、以下を実行します。
+以下に説明するアセットは、GitHubの公開リポジトリ https://github.com/mfosterrox/demo.git で入手できます。アセットをデプロイするには、以下を実行します。
 
 |===
-NOTE: Skip the *git clone* command if you have the existing folder ready, But you will need to the commands after to ensure all of the resources are available. 
-
-
-注：既存のフォルダを用意している場合は、*git clone*コマンドをスキップしてください。ただし、すべてのリソースが利用できるようにするために、コマンドを実行する必要があります。
+*NOTE* 既存のフォルダを用意している場合は、*git clone* コマンドをスキップしてください。ただし、すべてのリソースが利用できるようにするために、コマンドを実行する必要があります。
 |===
 
 [source,bash,role="execute"]
@@ -117,11 +77,7 @@ kubectl apply -f $TUTORIAL_HOME/workshop/demo-apps/ --recursive
 ----
 
 |===
-*NOTE* This command applies a plethora of manifests to your environment. The important part is that the deployments are up and running. The
-
-*注* このコマンドは、あなたの環境にたくさんの数のマニフェストを適用します。重要なのは、デプロイメントが稼働していることです。
-
-Run the following command and ensure that the applications are up and running
+*NOTE* このコマンドは、あなたの環境にたくさんの数のマニフェストを適用します。重要なのは、デプロイメントが稼働していることです。
 
 次のコマンドを実行し、アプリケーションが稼働していることを確認します。
 |===
@@ -131,9 +87,8 @@ Run the following command and ensure that the applications are up and running
 kubectl get deployments -l demo=acs -A
 ----
 
-*Output*
+*出力* は以下のようになります。
 
-*出力は以下のようになります*
 ```bash
 NAMESPACE      NAME               READY   UP-TO-DATE   AVAILABLE   AGE
 backend        api-server         1/1     1            1           0d
@@ -145,13 +100,9 @@ payments       visa-processor     1/1     1            1           0d
 spring4shell   spring4shell-app   3/3     3            3           0d
 ```
 
-==== Image Scan Pod Task
-
-The first of two tasks in the pipeline is the *image scan test* task. The task starts by asking the user for an image to scan. Next, the roxctl CLI will send this information to central and ask for an analysis. ACS Central will send back all the fixable and nonfixable vulnerabilities associated with the image. The *image scan* file will show you the necessary variables, the steps required to complete the scan, and the script itself. 
+==== イメージスキャンPod Task
 
 パイプラインの2つのタスクのうち、最初のタスクは *image scan test* タスクです。このタスクは、まず、スキャンするイメージをユーザに要求します。次に、roxctl CLI はこの情報をセントラルに送信し、分析を依頼します。ACS Centralは、イメージに関連する修正可能な脆弱性と修正不可能な脆弱性をすべて送り返します。*image scan* ファイルには、必要な変数、スキャンを完了するために必要な手順、およびスクリプトそのものが表示されます。
-
-To see the *image scan* task, run the following on the command line;
 
 *image scan* タスクを表示するには、コマンドラインで以下を実行します。
 
@@ -160,17 +111,11 @@ To see the *image scan* task, run the following on the command line;
 cat $TUTORIAL_HOME/workshop/demo-apps/pipelines/tasks/rox-image-scan-task.yml 
 ----
 
-After the scan is completed, we must check if the container violates specific policies.
-
 スキャンが完了したら、コンテナが特定のポリシーに違反していないかどうかをチェックする必要があります。
 
-==== Image Check Test Task
-
-The *image check test* will tell ACS central to check the scanned image against the policies enabled in ACS. The file is extremely similar to the *image scan test* with the roxctl command being the main difference in the file.
+==== イメージチェックテスト Task
 
 *image check test* は、ACSで有効化されたポリシーに対してスキャンされたイメージをチェックするよう、ACS centralに指示します。このファイルは、roxctlコマンドがファイルの主な違いである *image scan test* と非常によく似ています。
-
-To see the *image check* task, run the following on the command line;
 
 *image check* タスクを表示するには、コマンドラインで以下を実行します。
 
@@ -179,58 +124,36 @@ To see the *image check* task, run the following on the command line;
 cat $TUTORIAL_HOME/workshop/demo-apps/pipelines/tasks/rox-image-check-task.yml 
 ----
 
-Two variables are missing in both files: the *ROX_CENTRAL_ENDPOINT* and the *ROX_API_TOKEN*. Any automated check need to be given the correct access so that the pipeline, and cluster, cannot be breached by an external source. 
-
 *ROX_CENTRAL_ENDPOINT* と *ROX_API_TOKEN* の2つの変数が両ファイルで欠落しています。パイプラインとクラスタが外部から侵入されないように、自動チェックには正しいアクセス権を与える必要があります。
-
-In the next step, access will be granted to the pipeline to be able to run these commands. 
 
 次のステップでは、これらのコマンドを実行できるように、パイプラインにアクセス権を付与します。
 
-=== Authorizing the CI Process
-
-CIプロセスの権限付与
-
-First, we will need to create a token to access ACS central. 
+=== CIプロセスの権限付与
 
 まず、ACS centralにアクセスするためのトークンを作成する必要があります。
-
-Access the RHACS web user interface, select "Platform Configuration" from the left-hand side menu, and then select integrations. Scroll down to the section for authentication tokens and select "StackRox API Token." 
 
 RHACSのWebユーザーインターフェースにアクセスし、左側のメニューから"Platform Configuration"を選択し、integrationsを選択します。認証トークンのセクションまでスクロールし、"StackRox API Token "を選択します。
 
 image::images/ci-1.png[]
 
-Press the *Generate Token* button in the top right corner and select the token role of "Continuous Integration." Give the token a name and press the button titled "Generate".
-
 右上の *Generate Token* ボタンを押し、"Continuous Integration "というトークンの役割を選択します。トークンに名前を付け、"Generate"というタイトルのボタンを押します。
 
 image::images/ci-2.png[]
 
-* Create a token name and click the 'Continuous Integration' role.
+* 適当なトークン名を作成し、'Continuous Integration'ロールをクリックします。
 
-トークン名を作成し、'Continuous Integration'ロールをクリックします。
+* トークンを *rox-secrets.yml* ファイルに追加する必要があるため、必ずコピーしてください。
 
-* Make sure to copy the token as we need to add it to the *rox-secrets.yml* file.
-
-トークンを *rox-secrets.yml* ファイルに追加する必要があるため、必ずコピーしてください。
-
-* Next, edit the *rox-secrets.yml* file in the demo directory. Use *vi/vim/nano/your favorite command line editor* to add the API token to the following file.
-
-次に、demoディレクトリにある *rox-secrets.yml* ファイルを編集してください。vi/vim/nano/などお好みのコマンドラインエディタを使用して、以下のファイルにAPIトークンを追加してください。
+* 次に、demoディレクトリにある *rox-secrets.yml* ファイルを編集してください。vi/vim/nano/などお好みのコマンドラインエディタを使用して、以下のファイルにAPIトークンを追加してください。
 
 ----
 $TUTORIAL_HOME/workshop/demo-apps/pipelines/pipeline/rox-secrets.yml 
 ----
 
 |===
-NOTE: make sure to only alter the line that says *rox_api_token: "YOUR_API_TOKEN_HERE"*
-
-注： *rox_api_token: "YOUR_API_TOKEN_HERE "* という行だけを変更することを確認してください。
+*NOTE* : *rox_api_token: "YOUR_API_TOKEN_HERE "* という行だけを変更することを確認してください。
 
 |===
-
-Then apply the changes.
 
 その後、変更内容を適用します。
 
@@ -240,42 +163,27 @@ kubectl apply -f $TUTORIAL_HOME/workshop/demo-apps/pipelines/pipeline/rox-secret
 ----
 
 |===
-NOTE: If you’re unfamiliar with text editors, you can also edit this via the OpenShift console. Go to Workloads -> Secrets, click on ‘roxsecrets’, switch to the YAML tab and make your changes there and save them.
-
-注：テキストエディタに不慣れな方は、OpenShiftコンソールから編集することもできます。Workloads -> Secretsに行き、'roxsecrets'をクリックし、YAMLタブに切り替えてそこで変更を加え、保存します。
+*NOTE* : テキストエディタに不慣れな方は、OpenShiftコンソールから編集することもできます。Workloads -> Secretsに行き、'roxsecrets'をクリックし、YAMLタブに切り替えてそこで変更を加え、保存します。
 |===
-
-You are now ready to run your pipeline!
 
 これで、パイプラインを実行する準備が整いました。
 
-== Executing the Pipeline
-
-First, head to the OpenShift console to execute the pipeline. Then click on the *Pipelines* tab to select the *Pipelines* dropdown.
+== Pipelineの実行
 
 まず、パイプラインを実行するためにOpenShiftのコンソールで、*Pipelines* タブをクリックして、*Pipelines* ドロップダウンを選択します。
 
 image::images/pipeline-1.png[]
 
-You should see a pipeline labeled *rox-pipeline*. Let's run one.
-
 *rox-pipeline* と書かれたパイプラインが表示されているはずです。ひとつ実行してみましょう。
-
-To run a pipeline, you can click the three dots to the left of the pipeline and click *start*, OR you can click on the *rox-pipeline* to be brought to a details page where you can select *actions -> start* 
-
 パイプラインを実行するには、パイプラインの左にある3つの点をクリックして *start* をクリックするか、*rox-pipeline* をクリックして詳細ページに移動し、*actions -> start* を選択することができます。
 
 image::images/pipeline-2.png[]
 
 image::images/pipeline-3.png[]
 
-* You will need to add the image you wish to scan (quay.io/mfoster/log4shell-demo:0.1.0). In this case, we want to look at the image we know has the log4shell vulnerability.
-
 * スキャンしたいイメージ（quay.io/mfoster/log4shell-demo:0.1.0）を追加する必要があります。今回は、log4shellの脆弱性があることが分かっているイメージを見たいと思います。
 
 image::images/pipeline-4.png[]
-
-* Click start and ensure that the pipeline is in its running phase. It should look like the pictures below. 
 
 * startをクリックし、パイプラインが実行段階にあることを確認します。下の図のような状態になるはずです。
 
@@ -283,48 +191,30 @@ image::images/pipeline-5.png[]
 
 image::images/pipeline-6.png[]
 
-Since this image is designed to fail, we should only have 1 of the tasks pass. Therefore the outcome will look like the following. 
-
 このイメージは失敗するように設計されているので、タスクのうち1つだけが通過します。したがって、結果は次のようになります。
 
 image::images/pipeline-7.png[]
 
 image::images/pipeline-8.png[]
 
-From the image above, the log snippet shows that 5 policies have been violated. 
-
 上の画像から、ログの抜粋では、5つのポリシーが違反されていることがわかります。
 
-* Click on the *Logs* tab to view the total output of the pipeline.
-
-* パイプラインの総出力を見るには、*Logs*タブをクリックします。
-
-If you expand the log snippet, you will get an output like the following.
+* パイプラインの総出力を見るには、*Logs* タブをクリックします。
 
 ログを展開すると、以下のような出力が得られます。
 
 image::images/pipeline-9.png[]
 
-Congratulations! The log shows that the policy log4shell policy has been violated, breaking the pipeline.
-
 ログには、ポリシーlog4shellがポリシーに違反のため、パイプラインを切断したことが示されています。
-
-If this check was added to other builds/deploy pipelines, it could halt the deployment of vulnerable apps moving forward. 
 
 このチェックが他のビルド/デプロイパイプラインに追加された場合、脆弱なアプリのデプロイを前倒しで停止させることが可能です。
 
 == Extra Challenge
 
-Suppose you are looking for a challenge. Try the following.
-
-次のことを試してみてください。
-
-Create a policy that will target a specific CVE deployed in the cluster (i.e., the Apache Struts violation=CVE-2013-1965) and run the pipeline again with a new container to see if the policy is triggered.
+もっとチャレンジしてみたいと思った場合は、次のことを試してみてください。
 
 クラスタに配備された特定のCVE（Apache Struts violation=CVE-2013-1965）をターゲットにするポリシーを作成し、新しいコンテナでパイプラインを再度実行し、ポリシーがトリガーされるかどうか確認します
 
 |===
-*Hint:* Find a container with a critical vulnerability first, create the policy, and alter the pipeline.
-
-まず重要な脆弱性を持つコンテナを見つけ、ポリシーを作成し、パイプラインを変更します。
+*Hint:* まず重要な脆弱性を持つコンテナを見つけ、ポリシーを作成し、パイプラインを変更します。
 |===

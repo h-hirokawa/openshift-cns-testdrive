@@ -76,6 +76,20 @@ metadata:
 oc create -f {{ HOME_PATH }}/support/openshift_logging_namespace.yaml
 ----
 
+ネームスペースが作成されたか確認します。
+
+[source,bash,role="execute"]
+----
+oc get ns openshift-logging
+----
+
+次のような結果が表示されるはずです。
+
+```
+NAME                STATUS   AGE
+openshift-logging   Active   11s
+```
+
 
 #### `Elasticsearch` と `Cluster Logging` Operator をクラスターにインストールする
 
@@ -162,12 +176,6 @@ Operator のインストールは成功したものの、Operator 自体のイ�
 +
 4. `Cluster Loggings` ページで、 `Create Cluster Logging` をクリックします。
 +
-[Warning]
-====
-このステップに入る前に、`OpenShift Data Foundation(ODF)` モジュールを完了している必要があります。
-`ODF` モジュールが完了していない場合は、エディタにコピーする前に、以下の `YAML` の `storageClassName: ocs-storagecluster-ceph-rbd` を `storageClassName: gp2` で置き換える必要があります。
-====
-
 5. `YAML` エディタで、コードを以下で置き換えます。:
 
 [source,yaml]
@@ -185,7 +193,7 @@ spec:
     elasticsearch:
       nodeCount: 3
       storage:
-         storageClassName: ocs-storagecluster-ceph-rbd
+         storageClassName: gp2
          size: 100Gi
       redundancyPolicy: "SingleRedundancy"
       nodeSelector:

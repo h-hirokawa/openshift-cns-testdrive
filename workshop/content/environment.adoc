@@ -7,7 +7,7 @@
 OpenShift 4のインストールは事前に完了しています。OpenShift4クラスタは基本的にすべてデフォルトに設定されており、以下のようなクラスタ構成になっています。
 
 * 3 Master ノード
-* 3 Worker ノード
+* 2 または 3 Worker ノード
 * 1 Bastion Host (踏み台ホスト)
 
 このワークショップでは、Rook/CephをベースにしたOpenShift Data Foundation(ODF)のインストールも行います。その際にODF用のノードを3台追加しますが、ノードの追加はODFの演習の中で行うため、ワークショップ開始の時点では3台のWorkerノードで構いません。
