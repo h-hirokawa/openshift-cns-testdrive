@@ -138,11 +138,13 @@ image::images/ci-1.png[]
 
 右上の *Generate Token* ボタンを押し、"Continuous Integration "というトークンの役割を選択します。トークンに名前を付け、"Generate"というタイトルのボタンを押します。
 
-image::images/ci-2.png[]
-
 * 適当なトークン名を作成し、'Continuous Integration'ロールをクリックします。
 
+image::images/ci-ja-2.png[]
+
 * トークンを *rox-secrets.yml* ファイルに追加する必要があるため、必ずコピーしてください。
+
+image::images/ci-ja-3.png[]
 
 * 次に、demoディレクトリにある *rox-secrets.yml* ファイルを編集してください。vi/vim/nano/などお好みのコマンドラインエディタを使用して、以下のファイルにAPIトークンを追加してください。
 
@@ -183,7 +185,9 @@ image::images/pipeline-3.png[]
 
 * スキャンしたいイメージ（quay.io/mfoster/log4shell-demo:0.1.0）を追加する必要があります。今回は、log4shellの脆弱性があることが分かっているイメージを見たいと思います。
 
-image::images/pipeline-4.png[]
+image::images/pipeline-ja-4.png[]
+
+image::images/pipeline-ja-5.png[]
 
 * startをクリックし、パイプラインが実行段階にあることを確認します。下の図のような状態になるはずです。
 
