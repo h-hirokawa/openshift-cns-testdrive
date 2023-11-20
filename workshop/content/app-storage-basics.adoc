@@ -73,9 +73,9 @@ oc get pod
 ----
 
 ----
-NAME                     READY   STATUS              RESTARTS   AGE
-mapit-649fd997c6-rvntj   0/1     ContainerCreating   0          13s
-mapit-79975ccb98-hpw6m   1/1     Running             0          76s
+NAME                     READY   STATUS        RESTARTS   AGE
+mapit-788d5fb5d5-xv4f5   1/1     Running       0          51s
+mapit-78947bff67-qrgb9   1/1     Terminating   0          4m50s
 ----
 
 `Deployment` を見てみましょう。
@@ -89,7 +89,7 @@ oc describe deploy mapit
 
 ----
 ...
-    Mounts:
+   Mounts:
       /app-storage from mapit-storage (rw)
   Volumes:
    mapit-storage:
@@ -112,16 +112,16 @@ oc get storageclass
 以下のように表示されます。
 
 ----
-NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   47m
-gp2-csi         ebs.csi.aws.com         Delete          WaitForFirstConsumer   true                   47m
+NAME                PROVISIONER       RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+gp2-csi             ebs.csi.aws.com   Delete          WaitForFirstConsumer   true                   91m
+gp3-csi (default)   ebs.csi.aws.com   Delete          WaitForFirstConsumer   true                   91m
 ----
 
-`StorageClass` を指定していない `PersistentVolumeClaim` では、デフォルトの *StorageClass* が使用されます。この場合では、デフォルトはEBS Provisionerで、リクエストされたサイズ(この例では1Gi)のEBS GP2 Volumeを作成します。
+`StorageClass` を指定していない `PersistentVolumeClaim` では、デフォルトの *StorageClass* が使用されます。この場合では、デフォルトはEBS Provisionerで、リクエストされたサイズ(この例では1Gi)のEBS GP3-CSI Volumeを作成します。
 
 [Note]
 ====
-`gp2-csi` もあることに注意してみましょう。これは https://github.com/container-storage-interface/spec[CSI] を実装した *StorageClass* です。これは "Container Storage Interface" の略です。
+これは https://github.com/container-storage-interface/spec[CSI] を実装した *StorageClass* です。これは "Container Storage Interface" の略です。
 CSIの仕様により、ストレージベンダはプラグインを一度開発すれば、様々なコンテナオーケストレーションシステムで動作させることができるようになります。
 ====
 
@@ -140,11 +140,15 @@ oc get persistentvolume
 以下のように表示されます。
 
 ----
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                          STORAGECLASS   REASON   AGE
-pvc-4397c6be-9f53-490e-960d-c1b77de6000c   1Gi        RWO            Delete           Bound    app-management/mapit-storage   gp2                     12m
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM
+                    STORAGECLASS   REASON   AGE
+pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39   1Gi        RWO            Delete           Bound    app-managem
+ent/mapit-storage   gp3-csi                 3m31s
+pvc-b2bdd83b-4ca6-4af2-8695-9a0b90314ae8   100Gi      RWO            Delete           Bound    stackrox/ce
+ntral-db            gp3-csi                 63m
 ----
 
-これは、先ほどのClaimの結果として作成された `Persistent Volume` です。この `app-management` Project に存在するClaimにBindされている(*Bound*)ことに注意してください。
+`pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39`は、先ほどのClaimの結果として作成された `Persistent Volume` です。この `app-management` Project に存在するClaimにBindされている(*Bound*)ことに注意してください。
 
 [source,bash,role="execute"]
 ----
@@ -154,8 +158,10 @@ oc get persistentvolumeclaim -n app-management
 以下のように表示されます。
 
 ----
-NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-mapit-storage   Bound    pvc-4397c6be-9f53-490e-960d-c1b77de6000c   1Gi        RWO            gp2            14m
+NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS
+   AGE
+mapit-storage   Bound    pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39   1Gi        RWO            gp3-csi
+   5m10s
 ----
 
 ### 永続ストレージのテスト

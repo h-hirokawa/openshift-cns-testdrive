@@ -193,7 +193,7 @@ spec:
     elasticsearch:
       nodeCount: 3
       storage:
-         storageClassName: gp2
+         storageClassName: gp3-csi
          size: 100Gi
       redundancyPolicy: "SingleRedundancy"
       nodeSelector:
@@ -244,23 +244,20 @@ oc get pods -n openshift-logging
 
 ----
 NAME                                            READY   STATUS    RESTARTS   AGE
-cluster-logging-operator-5d4b6f7b99-ksr5s       1/1     Running   0          113s
-collector-2p5fx                                 2/2     Running   0          26s
-collector-7lw5r                                 2/2     Running   0          42s
-collector-8stvf                                 2/2     Running   0          32s
-collector-b7qs8                                 2/2     Running   0          27s
-collector-clfsc                                 2/2     Running   0          16s
-collector-f2tzf                                 2/2     Running   0          31s
-collector-j6hxp                                 2/2     Running   0          10s
-collector-kdvj8                                 2/2     Running   0          30s
-collector-q6wck                                 2/2     Running   0          21s
-collector-sgndk                                 2/2     Running   0          17s
-collector-w5ds9                                 2/2     Running   0          29s
-collector-zswpb                                 2/2     Running   0          34s
-elasticsearch-cdm-mnc985r3-1-5c45b9bd9f-4nx56   2/2     Running   0          70s
-elasticsearch-cdm-mnc985r3-2-779989b7bb-z9dpp   1/2     Running   0          69s
-elasticsearch-cdm-mnc985r3-3-6d754c8cbf-fx8wd   1/2     Running   0          68s
-kibana-655877db88-njsqq                         2/2     Running   0          70s
+cluster-logging-operator-5589794f49-8mzz2       1/1     Running   0          3m47s
+collector-dzzfq                                 1/1     Running   0          33s
+collector-f9jfl                                 1/1     Running   0          37s
+collector-gbgh5                                 1/1     Running   0          35s
+collector-k4v67                                 1/1     Running   0          20s
+collector-km52c                                 1/1     Running   0          32s
+collector-kr7s5                                 1/1     Running   0          22s
+collector-vfbd8                                 1/1     Running   0          20s
+collector-xv67r                                 1/1     Running   0          36s
+collector-xxv57                                 1/1     Running   0          38s
+elasticsearch-cdm-uuxhn2jc-1-74c4b6cfd5-mm54w   1/2     Running   0          50s
+elasticsearch-cdm-uuxhn2jc-2-7bf77985f8-x67m4   1/2     Running   0          49s
+elasticsearch-cdm-uuxhn2jc-3-665667c97f-d9pdm   1/2     Running   0          48s
+kibana-844b76cc6b-qkgg2                         2/2     Running   0          51s
 ----
 
 _collector_ *Pods* は、 *DaemonSet* としてデプロイされます。*DaemonSet* は、特定の *Pods* が、クラスタ内の特定の *Nodes* で常に実行されるための仕組みです。:
@@ -275,7 +272,7 @@ oc get daemonset -n openshift-logging
 
 ----
 NAME        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
-collector   10        10        10      10           10          kubernetes.io/os=linux   2m55s
+collector   9         9         9       9            9           kubernetes.io/os=linux   98s
 ----
 
 クラスタ内の *Node* ごとに1つの `collector` *Pod* が必要です。
@@ -292,20 +289,20 @@ oc get pvc -n openshift-logging
 以下のようなものが見えるはずです。:
 
 ----
-NAME                                         STATUS   VOLUME                                     CAPACITY   ACCESS
-MODES   STORAGECLASS                  AGE
-elasticsearch-elasticsearch-cdm-ggzilasv-1   Bound    pvc-f3239564-389c-11ea-bab2-06ca7918708a   100Gi      RWO
-        ocs-storagecluster-ceph-rbd   15m
-elasticsearch-elasticsearch-cdm-ggzilasv-2   Bound    pvc-f324a252-389c-11ea-bab2-06ca7918708a   100Gi      RWO
-        ocs-storagecluster-ceph-rbd   15m
-elasticsearch-elasticsearch-cdm-ggzilasv-3   Bound    pvc-f326aa7d-389c-11ea-bab2-06ca7918708a   100Gi      RWO
-        ocs-storagecluster-ceph-rbd   15m
+NAME                                         STATUS   VOLUME                                     CAPACITY
+  ACCESS MODES   STORAGECLASS   AGE
+elasticsearch-elasticsearch-cdm-uuxhn2jc-1   Bound    pvc-43d912d1-518d-48eb-abea-9be7814e0513   100Gi
+  RWO            gp3-csi        2m28s
+elasticsearch-elasticsearch-cdm-uuxhn2jc-2   Bound    pvc-1aa0c1f7-d7b3-4d15-9e78-0e917617d691   100Gi
+  RWO            gp3-csi        2m28s
+elasticsearch-elasticsearch-cdm-uuxhn2jc-3   Bound    pvc-a3bc5f96-1ace-4b98-93c9-941aad3e35a7   100Gi
+  RWO            gp3-csi        2m28s
 ----		
 
 [Note]
 ====
 Metrics ソリューションの場合と同様に、Logging 構成( `CR` )で適切な `NodeSelector` を定義して、Logging コンポーネントが infra ノードにしかデプロイされないようにしています。
-つまり、`DaemonSet` は FluentD が *すべての* ノードで実行されることを保証しています。
+とはいえ、`DaemonSet` は FluentD が *すべての* ノードで実行されることを保証しています。
 そうでなければ、すべてのコンテナログをキャプチャすることはできません。
 ====
 
@@ -556,7 +553,7 @@ CRが作成されると、Cluster Logging Operatorは `Collector` Podsをデプ�
 oc rollout status ds/collector -n openshift-logging
 ----
 
-Podが再展開されない場合は、 `Collector` Podを手動で削除して、強制的に再展開させることができます。
+Podが再展開されない場合は、 `Collector` Podを手動で削除して、強制的に再展開させることができます。(Podが再開されない場合のみ、実施します)
 
 [source,bash,role="execute"]
 ----

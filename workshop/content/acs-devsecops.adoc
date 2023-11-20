@@ -18,6 +18,11 @@ Red Hat Advanced Cluster Security for Kubernetesには、RHACSサーバーに保
 
 roxctlコマンドラインインターフェイスには、リソースやイメージの解析のためのオプションがいくつか用意されています。特に注目しているのはdeploymentオプションで、従来はKubernetesリソースのデプロイ準備状況を確認するために使用されていました。開発のビルド段階でこのオプションを使用することで、チームはデプロイ時期まで待つのではなく、より早い段階でデプロイの問題を把握することができます。これにより、チームは開発中に問題を修正することができ、コストを削減し、よりスムーズなデプロイメントにつなげることができます。
 
+== （↓ここから）本ワークショップの範囲外です
+
+|===
+*NOTE:* roxctl deployment checkを利用するPipelineについて記載しています。本ワークショップでは演習外なので、参考程度に読み飛ばしてください。
+|===
 
 === 継続的インテグレーションとroxctlプロセス
 以下の例のCIプロセスは、ユーザーが独自の広範囲のOpenShift Pipelinesプロセスに構築できるタスク、スケルトンパイプライン、およびパイプライン実行リソースを利用しています。リソースとそれらの相互作用を図 1 に示します。
@@ -28,7 +33,7 @@ _図 1: OpenShift Pipeline process_ +
 
 === Pipeline Run リソース
 
-OpenShift Pipelines の "pipeline run" リソースは、必要なパラメータを渡して、パイプラインリソースを呼び出します。パラメータの一部は上の図1で強調表示されており、すべてのパラメータは下の表で説明されています。パイプラインの実行では、"files"という10MBの永続的なボリュームにワークスペースを定義し、そこにソースアセットをクローンし、結果ファイルが書き込まれます。ここで説明するタスクを既存のOpenShift Pipelinesプロセスに追加したい場合は、パラメータ定義とワークスペース・ボリュームを既存のパイプライン・ランに追加してください。
+OpenShift Pipelines の "pipeline run" リソースは、必要なパラメータを渡して、パイプラインリソースを呼び出します。パラメータの一部は上の図1で強調表示されており、すべてのパラメータは下の表で説明されています。パイプラインの実行では、"files"という10MBの永続的なボリュームにワークスペースを定義し、そこにソースアセットをクローンし、結果ファイルが書き込まれます。ここで説明するタスクを既存のOpenShift Pipelinesプロセスに追加したい場合は、パラメータ定義とワークスペース・ボリュームを既存のPipeline Runに追加してください。
 
 |===
 |Parameter|Description|Used by task
@@ -48,20 +53,22 @@ OpenShift Pipelines の "pipeline run" リソースは、必要なパラメー�
 |recursive-search|`true` の場合、上記のパスは、拡張子がyamlまたはymlのすべてのファイルに対して再帰的に検索されます。|Resource deployment check
 |===
 
-
-
 === Pipeline リソース
 
 前述のGitHubリポジトリにあるOpenShift Pipelinesの"pipeline"リソースが、タスクの実行とタスク間のパラメータの受け渡しをオーケストレーションしています。パイプラインの使い方については、「スキャン結果に基づく意思決定」の項で詳しく解説しています。
 
-== Workshopセットアップ
+== （↑ここまで）
+
+== ワークショップセットアップ
+
+本ワークショップでは、コマンドラインインターフェイス *roxctl* を利用する簡単なPipelineを作成して、継続的インテグレーションプロセスに導入した場合の動作を確認します。
 
 === Pipelineアセットをデプロイする
 
 以下に説明するアセットは、GitHubの公開リポジトリ https://github.com/mfosterrox/demo.git で入手できます。アセットをデプロイするには、以下を実行します。
 
 |===
-*NOTE* 既存のフォルダを用意している場合は、*git clone* コマンドをスキップしてください。ただし、すべてのリソースが利用できるようにするために、コマンドを実行する必要があります。
+*NOTE* 既存のフォルダーの準備ができている場合は *git clone* コマンドをスキップしますが、すべてのリソースが利用可能であることを確認するためにその後のコマンドを実行する必要があります。
 |===
 
 [source,bash,role="execute"]
@@ -77,10 +84,10 @@ kubectl apply -f $TUTORIAL_HOME/workshop/demo-apps/ --recursive
 ----
 
 |===
-*NOTE* このコマンドは、あなたの環境にたくさんの数のマニフェストを適用します。重要なのは、デプロイメントが稼働していることです。
+*NOTE* このコマンドは、環境にたくさんの数のマニフェストを適用します。
+|===
 
 次のコマンドを実行し、アプリケーションが稼働していることを確認します。
-|===
 
 [source,bash,role="execute"]
 ----
@@ -99,65 +106,72 @@ operations     jump-host          1/1     1            1           0d
 payments       visa-processor     1/1     1            1           0d
 spring4shell   spring4shell-app   3/3     3            3           0d
 ```
+=== TaskとPipeline
 
-==== イメージスキャンPod Task
+Pipelineアセットをデプロイした際に、次のyamlファイルを利用してTaskとPipelineがデプロイされています。
 
-パイプラインの2つのタスクのうち、最初のタスクは *image scan test* タスクです。このタスクは、まず、スキャンするイメージをユーザに要求します。次に、roxctl CLI はこの情報をセントラルに送信し、分析を依頼します。ACS Centralは、イメージに関連する修正可能な脆弱性と修正不可能な脆弱性をすべて送り返します。*image scan* ファイルには、必要な変数、スキャンを完了するために必要な手順、およびスクリプトそのものが表示されます。
+$TUTORIAL_HOME/workshop/demo-apps/pipelines/pipeline以下
 
-*image scan* タスクを表示するには、コマンドラインで以下を実行します。
+* rox-pipeline.yml
+* rox-secrets.yml
+
+$TUTORIAL_HOME/workshop/demo-apps/pipelines/tasks以下
+
+* rox-image-check-task.yml
+* rox-image-scan-task.yml
+
+*rox-pipeline* Pipelineは2つのTaskから構成されています。
+
+==== Image Scan Pod Task
+
+*rox-pipeline* Pipelineを構成する2つのTaskのうち、最初のTaskは *image scan test* Taskです。このTaskは、まず、スキャンするイメージをユーザに要求します。次に、roxctl CLI はこの情報をCentralに送信し、分析を依頼します。ACS Centralは、イメージに関連する修正可能な脆弱性と修正不可能な脆弱性をすべて送り返します。
+
+*image scan* Taskの内容を表示するには、コマンドラインで以下のcatコマンドを実行します。ファイルには、必要な変数、スキャンを完了するために必要な手順、およびスクリプトそのものが表示されます。
 
 [source,bash,role="execute"]
 ----
 cat $TUTORIAL_HOME/workshop/demo-apps/pipelines/tasks/rox-image-scan-task.yml 
 ----
 
-スキャンが完了したら、コンテナが特定のポリシーに違反していないかどうかをチェックする必要があります。
+スキャンが完了したら、コンテナが特定のポリシーに違反していないかどうかをチェックします。
 
-==== イメージチェックテスト Task
+==== Image Check Test Task
 
-*image check test* は、ACSで有効化されたポリシーに対してスキャンされたイメージをチェックするよう、ACS centralに指示します。このファイルは、roxctlコマンドがファイルの主な違いである *image scan test* と非常によく似ています。
+*image check test* Taskは、ACSで有効になっているポリシーとスキャンしたイメージを照合するようACS Centralに指示します。 *image scan test* Taskと非常によく似ており、主な違いはroxctlコマンドです。
 
-*image check* タスクを表示するには、コマンドラインで以下を実行します。
+*image check* Taskの内容を表示するには、コマンドラインで以下のcatコマンドを実行します。
 
 [source,bash,role="execute"]
 ----
 cat $TUTORIAL_HOME/workshop/demo-apps/pipelines/tasks/rox-image-check-task.yml 
 ----
 
-*ROX_CENTRAL_ENDPOINT* と *ROX_API_TOKEN* の2つの変数が両ファイルで欠落しています。パイプラインとクラスタが外部から侵入されないように、自動チェックには正しいアクセス権を与える必要があります。
+rox-image-scan-task.ymlとrox-image-check-task.ymlともにエンドポイント *ROX_CENTRAL_ENDPOINT* と APIトークン *ROX_API_TOKEN* の2つの変数が欠落しています。Pipelineとクラスタが外部から侵入されないように、自動チェックには正しいアクセス権を与える必要があります。そのため、これらの情報はsecretに保存します。
 
-次のステップでは、これらのコマンドを実行できるように、パイプラインにアクセス権を付与します。
+次のステップでは、これらのコマンドを実行できるように、Pipelineにアクセス権を付与します。
 
 === CIプロセスの権限付与
 
-まず、ACS centralにアクセスするためのトークンを作成する必要があります。
+まず、ACS Centralにアクセスするためのトークンを作成する必要があります。
 
-RHACSのWebユーザーインターフェースにアクセスし、左側のメニューから"Platform Configuration"を選択し、integrationsを選択します。認証トークンのセクションまでスクロールし、"StackRox API Token "を選択します。
+RHACSのWebユーザーインターフェースにアクセスし、左側のメニューから"Platform Configuration"を選択し、"integrations"を選択します。一番下の"Authentication Tokens"のセクションまでスクロールし、"StackRox API Token"を選択します。
 
 image::images/ci-1.png[]
 
-右上の *Generate Token* ボタンを押し、"Continuous Integration "というトークンの役割を選択します。トークンに名前を付け、"Generate"というタイトルのボタンを押します。
-
-* 適当なトークン名を作成し、'Continuous Integration'ロールをクリックします。
+右上の *Generate Token* ボタンを押し、トークンに適切な名前を付け（例えばacsworkshop）、"Continuous Integration "というRoleを選択し、*Generate* ボタンを押します。
 
 image::images/ci-ja-2.png[]
 
-* トークンを *rox-secrets.yml* ファイルに追加する必要があるため、必ずコピーしてください。
+* トークンが生成されるので、必ずコピーしてください。次のステップで必要になります。トークンの表示は一度きりで、再度表示することはできません。 
 
 image::images/ci-ja-3.png[]
 
-* 次に、demoディレクトリにある *rox-secrets.yml* ファイルを編集してください。vi/vim/nano/などお好みのコマンドラインエディタを使用して、以下のファイルにAPIトークンを追加してください。
+* 次に、*$TUTORIAL_HOME/workshop/demo-apps/pipelines/pipeline/rox-secrets.yml* ファイルを編集してください。vi/vim/nano/などお好みのコマンドラインエディタを使用して、先ほどコピーしたトークンを追加してください。
 
-----
-$TUTORIAL_HOME/workshop/demo-apps/pipelines/pipeline/rox-secrets.yml 
-----
+*NOTE* : *rox_api_token: "YOUR_API_TOKEN_HERE"* という行の *YOUR_API_TOKEN_HERE* の部分をコピーしたトークンと置き換えます。
 
-|===
-*NOTE* : *rox_api_token: "YOUR_API_TOKEN_HERE "* という行だけを変更することを確認してください。
 
-|===
-
-その後、変更内容を適用します。
+その後、次のコマンドで変更内容をOpenShift環境に適用します。
 
 [source,bash,role="execute"]
 ----
@@ -168,47 +182,57 @@ kubectl apply -f $TUTORIAL_HOME/workshop/demo-apps/pipelines/pipeline/rox-secret
 *NOTE* : テキストエディタに不慣れな方は、OpenShiftコンソールから編集することもできます。Workloads -> Secretsに行き、'roxsecrets'をクリックし、YAMLタブに切り替えてそこで変更を加え、保存します。
 |===
 
-これで、パイプラインを実行する準備が整いました。
+これで、*rox-pipeline* Pipelineを実行する準備が整いました。
 
 == Pipelineの実行
 
-まず、パイプラインを実行するためにOpenShiftのコンソールで、*Pipelines* タブをクリックして、*Pipelines* ドロップダウンを選択します。
+*rox-pipeline* Pipelineを実行するために、まず、OpenShiftのコンソールのAdministratorパースペクティブで、プロジェクト *pipeline-demo* に移動します。プロジェクトを移動したら、左側のメニューから *Pipelines* タブをクリックして、*Pipelines* ドロップダウンを選択します。
 
 image::images/pipeline-1.png[]
 
-*rox-pipeline* と書かれたパイプラインが表示されているはずです。ひとつ実行してみましょう。
-パイプラインを実行するには、パイプラインの左にある3つの点をクリックして *start* をクリックするか、*rox-pipeline* をクリックして詳細ページに移動し、*actions -> start* を選択することができます。
+*rox-pipeline* と書かれたPipelineが表示されているはずです。
+
+Pipelineを実行してみましょう。Pipelineを実行するには以下のいずれかの操作を行います。
+
+* Pipelineの左にある3つの点をクリックして *start* をクリックする
+* *rox-pipeline* をクリックして詳細ページに移動して、*actions -> start* を選択する
 
 image::images/pipeline-2.png[]
 
+または
+
 image::images/pipeline-3.png[]
 
-* スキャンしたいイメージ（quay.io/mfoster/log4shell-demo:0.1.0）を追加する必要があります。今回は、log4shellの脆弱性があることが分かっているイメージを見たいと思います。
+* スキャンしたいイメージが要求されます。このワークショップではlog4shellの脆弱性があることが分かっているイメージ（quay.io/mfoster/log4shell-demo:0.1.0）を調べます。
 
 image::images/pipeline-ja-4.png[]
 
 image::images/pipeline-ja-5.png[]
 
-* startをクリックし、パイプラインが実行段階にあることを確認します。下の図のような状態になるはずです。
+* イメージ名を入力後、右下の *start* をクリックし、Pipelineが実行段階にあることを確認します。下の図のような状態になるはずです。
 
 image::images/pipeline-5.png[]
 
 image::images/pipeline-6.png[]
 
-このイメージは失敗するように設計されているので、タスクのうち1つだけが通過します。したがって、結果は次のようになります。
+このイメージは失敗するように設計されているので、しばらくすると、Taskのうち1つだけが通過し、1つはFailします。したがって、結果は次のようになります。
 
 image::images/pipeline-7.png[]
 
+PLRというアイコンの横のrox-pipeline-xxx(xxxは環境に依存)をクリックします。
+
 image::images/pipeline-8.png[]
 
-上の画像から、ログの抜粋では、5つのポリシーが違反されていることがわかります。
+Log snippet欄のログの抜粋から、6つのポリシー違反があることがわかります。
 
-* パイプラインの総出力を見るには、*Logs* タブをクリックします。
+* 抜粋だけでなくPipelineの総出力を見るには、*Logs* タブをクリックします。
 
 ログを展開すると、以下のような出力が得られます。
 
 image::images/pipeline-9.png[]
 
-ログには、ポリシーlog4shellがポリシーに違反のため、パイプラインを切断したことが示されています。
+ログには、log4shellポリシー(Fixable Severity at least Important)に違反したためPipelineを切断したことが示されています。
 
-このチェックが他のビルド/デプロイパイプラインに追加された場合、脆弱なアプリのデプロイを前倒しで停止させることが可能です。
+この結果からわかるように、このチェックが他のビルド/デプロイPipelineに追加された場合、脆弱なアプリのデプロイを前倒しで停止させることが可能です。
+
+以上で、演習は終了です。

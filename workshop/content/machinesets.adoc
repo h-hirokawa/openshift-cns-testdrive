@@ -9,7 +9,7 @@ Kubernetes `Node` はコンテナがオーケストレーションされ、`Pod`
 ---
 
 ### MachineSets と Machines
-アプリケーション管理の演習で見たように、`ReplicaSet`/`ReplicationController` とそれが作成する `Pod` の間には基本的な関係があります。同様に、`MachineSet` と`Machine` の間にも関係があります。
+アプリケーション管理の演習で見たように、`ReplicaSet`/`ReplicationController` とそれが作成する `Pod` の間には基本的な関係があります。同様に、`MachineSet` と `Machine` の間にも関係があります。
 
 `MachineSet` は、`Machine` オブジェクトのセットに対して希望する状態を定義します。IPIインストールを使用する場合、`Operator` の仕事は、各 `Machine` の基礎となるインスタンスが実際に存在することを確認し、最終的に各 `Machine` が `Node` になることを確認することです。
 
@@ -23,10 +23,10 @@ oc get machineset -n openshift-machine-api
 以下のように表示されます。
 
 ----
-NAME                                   DESIRED   CURRENT   READY   AVAILABLE   AGE
-cluster-f4a3-lpxbs-worker-us-east-2a   1         1         1       1           47h
-cluster-f4a3-lpxbs-worker-us-east-2b   1         1         1       1           47h
-cluster-f4a3-lpxbs-worker-us-east-2c   1         1         1       1           47h
+NAME                                         DESIRED   CURRENT   READY   AVAILABLE   AGE
+cluster-q5kr6-w97nj-worker-ap-southeast-1a   1         1         1       1           103m
+cluster-q5kr6-w97nj-worker-ap-southeast-1b   1         1         1       1           103m
+cluster-q5kr6-w97nj-worker-ap-southeast-1c   0         0                             103m
 ----
 
 OpenShiftがインストールされると、インストーラはクラウドプロバイダーに問い合わせて、利用可能なAZを得ます(この環境はAWS上にあるため)。そして、最終的に各AZの `MachineSet` を作成し、希望する `Machine` の数に達するまで、それらのセットを順番にスケーリングします。デフォルトのインストールには2つのWorkerがいるので、最初の2つのAZにはそれぞれ1つのWorkerが作られます。残りのAZは0です。
@@ -41,16 +41,20 @@ oc get machine -n openshift-machine-api
 以下のように表示されます。
 
 ----
-NAME                                         INSTANCE              STATE     TYPE         REGION      ZONE         AGE
-cluster-f4a3-lpxbs-master-0                  i-04280885cafad3130   running   m4.xlarge    us-east-2   us-east-2a   47h
-cluster-f4a3-lpxbs-master-1                  i-0def910edcae51d11   running   m4.xlarge    us-east-2   us-east-2b   47h
-cluster-f4a3-lpxbs-master-2                  i-0beb5e40214d706fc   running   m4.xlarge    us-east-2   us-east-2c   47h
-cluster-f4a3-lpxbs-worker-us-east-2a-b94pr   i-0a922c0fe765caa3c   running   m5.2xlarge   us-east-2   us-east-2a   47h
-cluster-f4a3-lpxbs-worker-us-east-2b-m8gbx   i-0fb8d960b8a3a3343   running   m5.2xlarge   us-east-2   us-east-2b   47h
-cluster-f4a3-lpxbs-worker-us-east-2c-5tmg7   i-0151c72cd85f85038   running   m5.2xlarge   us-east-2   us-east-2c   47h
+NAME                                               PHASE     TYPE          REGION           ZONE
+    AGE
+cluster-q5kr6-w97nj-master-0                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1
+a   103m
+cluster-q5kr6-w97nj-master-1                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1
+b   103m
+cluster-q5kr6-w97nj-master-2                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1
+c   103m
+cluster-q5kr6-w97nj-worker-ap-southeast-1a-c7k5k   Running   m5a.4xlarge   ap-southeast-1   ap-southeast-1
+a   97m
+cluster-q5kr6-w97nj-worker-ap-southeast-1b-w8p4d   Running   m5a.4xlarge   ap-southeast-1   ap-southeast-1
+b   97m
 ----
 
-各 `Machine` には対応する `INSTANCE` があります。このIDに見覚えはないでしょうか?これはAWS EC2のインスタンスIDです。また、OpenShiftのMasterの `Machine` も表示されています。これらはある程度ステートフルであり、管理は別のOperatorが別のプロセスを介して処理するため、`MachineSet` の一部ではありません
 
 [Warning]
 ====
@@ -67,13 +71,12 @@ oc get nodes
 以下のように表示されます。
 
 ----
-NAME                                         STATUS   ROLES    AGE   VERSION
-ip-10-0-133-191.us-east-2.compute.internal   Ready    worker   44m   v1.16.2
-ip-10-0-136-83.us-east-2.compute.internal    Ready    master   51m   v1.16.2
-ip-10-0-152-132.us-east-2.compute.internal   Ready    worker   44m   v1.16.2
-ip-10-0-157-139.us-east-2.compute.internal   Ready    master   51m   v1.16.2
-ip-10-0-167-9.us-east-2.compute.internal     Ready    worker   44m   v1.16.2
-ip-10-0-169-121.us-east-2.compute.internal   Ready    master   51m   v1.16.2
+NAME                                              STATUS   ROLES                  AGE    VERSION
+ip-10-0-135-241.ap-southeast-1.compute.internal   Ready    worker                 96m    v1.25.14+20cda61
+ip-10-0-142-79.ap-southeast-1.compute.internal    Ready    control-plane,master   106m   v1.25.14+20cda61
+ip-10-0-160-234.ap-southeast-1.compute.internal   Ready    worker                 96m    v1.25.14+20cda61
+ip-10-0-171-226.ap-southeast-1.compute.internal   Ready    control-plane,master   106m   v1.25.14+20cda61
+ip-10-0-205-200.ap-southeast-1.compute.internal   Ready    control-plane,master   106m   v1.25.14+20cda61
 ----
 
 各 `Machine` は、それぞれ `Node` に対応しています。IPIでは、Machine OperatorがEC2インスタンスを作成し、次にCoreOS内のIgnitionがOperatorから最初の命令を受け取る、bootstrapのプロセスが走ります。その結果、EC2インスタンスがOpenShift Nodeとして設定され、クラスタに参加することになります。
@@ -90,7 +93,7 @@ ip-10-0-169-121.us-east-2.compute.internal   Ready    master   51m   v1.16.2
 oc get machineset -n openshift-machine-api
 ----
 
-そのリストの中で。`MachineSet`のひとつを  oc scaleコマンドでスケールしてみましょう。あなたの `MachineSet` の名前はラボガイドの名前とは異なる可能性があるので、特に注意してください。
+そのリストの中で、`MachineSet` のひとつを  oc scaleコマンドでスケールしてみましょう。あなたの `MachineSet` の名前はラボガイドの名前とは異なる可能性があるので、特に注意してください。
 
 [source,bash,role="execute"]
 ----
@@ -106,13 +109,16 @@ oc scale machineset ${CLUSTERNAME}-worker-${ZONENAME} -n openshift-machine-api -
 oc get machines -n openshift-machine-api
 ----
 
-おそらく、`STATE` が `Pending` となっている `Machine` の新しいエントリがすでに存在していると思います。しばらくすると、対応するEC2インスタンスIDが表示され、以下のように表示されます。
+おそらく、`PHASE` が `Provisioning` となっている2つの新しいエントリがすでに存在していると思います。しばらくすると、以下のように表示されます。
 
 ----
-cluster-f4a3-lpxbs-worker-us-east-2c-h7gdt   i-0b9208ec47f0e206b   running   m5.2xlarge     us-east-2   us-east-2c   47s
+cluster-q5kr6-w97nj-worker-ap-southeast-1c-h444j   Provisioning   m5a.4xlarge   ap-southeast-1   ap-southeast-1
+c   4m51s
+cluster-q5kr6-w97nj-worker-ap-southeast-1c-h9xt9   Provisioning   m5a.4xlarge   ap-southeast-1   ap-southeast-1
+c   4m51s
 ----
 
-この時点では、バックグラウンドでは自動的にbootstrap処理が行われています。数分後(最大で5分程度)の出力を見てみましょう。
+この時点では、バックグラウンドでは自動的にbootstrap処理が行われています。数分後(5分程度)の出力を見てみましょう。
 
 [source,bash,role="execute"]
 ----
@@ -122,7 +128,8 @@ oc get nodes
 `age` が非常に若いノードが見つかるはずです。
 
 ----
-ip-10-0-166-103.us-east-2.compute.internal   Ready    worker   1m   v1.22.8
+ip-10-0-207-34.ap-southeast-1.compute.internal    Ready    worker                 79s    v1.25.14+20cda61
+ip-10-0-216-253.ap-southeast-1.compute.internal   Ready    worker                 83s    v1.25.14+20cda61
 ----
 
 [Note]

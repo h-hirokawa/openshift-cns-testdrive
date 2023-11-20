@@ -35,7 +35,7 @@ oc new-app quay.io/openshiftroadshow/mapit
 出力は以下のようになります。
 
 ----
---> Found container image 7ce7ade (3 years old) from quay.io for "quay.io/openshiftroadshow/mapit"
+--> Found container image a464a13 (12 days old) from quay.io for "quay.io/openshiftroadshow/mapit"
 
     * An image stream tag will be created as "mapit:latest" that will track this image
 
@@ -44,8 +44,8 @@ oc new-app quay.io/openshiftroadshow/mapit
     deployment.apps "mapit" created
     service "mapit" created
 --> Success
-    Application is not exposed. You can expose services to the outside world by executin
-g one or more of the commands below:
+    Application is not exposed. You can expose services to the outside world by executing one or more of t
+he commands below:
      'oc expose service/mapit'
     Run 'oc status' to view your app.
 ----
@@ -75,7 +75,7 @@ oc get pods
 
 ----
 NAME                     READY   STATUS    RESTARTS   AGE
-mapit-764c5bf8b8-l49z7   1/1     Running   0          2m53s
+mapit-5c6cc9968c-n4d27   1/1     Running   0          46s
 ----
 
 NOTE: Pod名はデプロイプロセスの一部として動的に生成されますが、これについては後ほど説明します。また表示される名前はこの表示とは少し異なります。
@@ -92,57 +92,62 @@ NOTE: `-l deployment=mapit` Podは後述する `Deployment` に関連してい�
 と実行すると、以下のような出力が表示されます。
 
 ----
-Name:         mapit-764c5bf8b8-l49z7
+Name:         mapit-5c6cc9968c-n4d27
 Namespace:    app-management
 Priority:     0
-Node:         ip-10-0-128-29.us-west-2.compute.internal/10.0.128.29
-Start Time:   Tue, 10 Nov 2020 21:01:09 +0000
+Node:         ip-10-0-135-241.ap-southeast-1.compute.internal/10.0.135.241
+Start Time:   Mon, 06 Nov 2023 01:50:05 +0000
 Labels:       deployment=mapit
-              pod-template-hash=764c5bf8b8
-Annotations:  k8s.v1.cni.cncf.io/network-status:
+              pod-template-hash=5c6cc9968c
+Annotations:  k8s.ovn.org/pod-networks:
+                {"default":{"ip_addresses":["10.128.2.114/23"],"mac_address":"0a:58:0a:80:02:72","gateway_
+ips":["10.128.2.1"],"ip_address":"10.128.2.114/2...
+              k8s.v1.cni.cncf.io/network-status:
                 [{
-                    "name": "",
+                    "name": "ovn-kubernetes",
                     "interface": "eth0",
                     "ips": [
-                        "10.129.2.99"
+                        "10.128.2.114"
                     ],
+                    "mac": "0a:58:0a:80:02:72",
                     "default": true,
                     "dns": {}
                 }]
               k8s.v1.cni.cncf.io/networks-status:
                 [{
-                    "name": "",
+                    "name": "ovn-kubernetes",
                     "interface": "eth0",
                     "ips": [
-                        "10.129.2.99"
+                        "10.128.2.114"
                     ],
+                    "mac": "0a:58:0a:80:02:72",
                     "default": true,
                     "dns": {}
                 }]
               openshift.io/generated-by: OpenShiftNewApp
-              openshift.io/scc: restricted
+              openshift.io/scc: restricted-v2
+              seccomp.security.alpha.kubernetes.io/pod: runtime/default
 Status:       Running
-IP:           10.129.2.99
+IP:           10.128.2.114
 IPs:
-  IP:           10.129.2.99
-Controlled By:  ReplicaSet/mapit-764c5bf8b8
+  IP:           10.128.2.114
+Controlled By:  ReplicaSet/mapit-5c6cc9968c
 Containers:
   mapit:
-    Container ID:   cri-o://fb708e659c19c6aaf8211bf7e3029f8adc8cf14959bcaefa5c7e6df17d37
-feaf
-    Image:          quay.io/openshiftroadshow/mapit@sha256:8c7e0349b6a016e3436416f3c54debda4594ba0
-9fd34b8a0dee0c4497102590d
-    Image ID:       quay.io/openshiftroadshow/mapit@sha256:8c7e0349b6a016e3436416f3c54debda4594ba0
-9fd34b8a0dee0c4497102590d
-    Ports:          9779/TCP, 8080/TCP, 8778/TCP
+    Container ID:   cri-o://fa2701f135bb807757f528a6115d7341934869e65c798a61908279ec65146c2a
+    Image:          quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd1
+0e0d80939efd1de9d
+    Image ID:       quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd1
+0e0d80939efd1de9d
+    Ports:          8080/TCP, 8778/TCP, 9779/TCP
     Host Ports:     0/TCP, 0/TCP, 0/TCP
     State:          Running
-      Started:      Tue, 10 Nov 2020 21:01:29 +0000
+      Started:      Mon, 06 Nov 2023 01:50:29 +0000
     Ready:          True
     Restart Count:  0
     Environment:    <none>
     Mounts:
-      /var/run/secrets/kubernetes.io/serviceaccount from default-token-v7fpq (ro)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-97d94 (ro)
 Conditions:
   Type              Status
   Initialized       True
@@ -150,27 +155,31 @@ Conditions:
   ContainersReady   True
   PodScheduled      True
 Volumes:
-  default-token-v7fpq:
-    Type:        Secret (a volume populated by a Secret)
-    SecretName:  default-token-v7fpq
-    Optional:    false
-QoS Class:       BestEffort
-Node-Selectors:  <none>
-Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
-                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+  kube-api-access-97d94:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+    ConfigMapName:           openshift-service-ca.crt
+    ConfigMapOptional:       <nil>
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
 Events:
-  Type    Reason          Age    From               Message
-  ----    ------          ----   ----               -------
-  Normal  Scheduled       6m50s  default-scheduler  Successfully assigned app-management
-/mapit-764c5bf8b8-l49z7 to ip-10-0-128-29.us-west-2.compute.internal
-  Normal  AddedInterface  6m48s  multus             Add eth0 [10.129.2.99/23]
-  Normal  Pulling         6m48s  kubelet            Pulling image "quay.io/openshiftroadshow/mapit
-@sha256:8c7e0349b6a016e3436416f3c54debda4594ba09fd34b8a0dee0c4497102590d"
-  Normal  Pulled          6m31s  kubelet            Successfully pulled image "quay.io/t
-horaxe/mapit@sha256:8c7e0349b6a016e3436416f3c54debda4594ba09fd34b8a0dee0c4497102590d" in
- 16.762028989s
-  Normal  Created         6m31s  kubelet            Created container mapit
-  Normal  Started         6m31s  kubelet            Started container mapit
+  Type    Reason          Age   From               Message
+  ----    ------          ----  ----               -------
+  Normal  Scheduled       55s   default-scheduler  Successfully assigned app-management/mapit-5c6cc9968c-n
+4d27 to ip-10-0-135-241.ap-southeast-1.compute.internal
+  Normal  AddedInterface  54s   multus             Add eth0 [10.128.2.114/23] from ovn-kubernetes
+  Normal  Pulling         54s   kubelet            Pulling image "quay.io/openshiftroadshow/mapit@sha256:1
+366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d"
+  Normal  Pulled          32s   kubelet            Successfully pulled image "quay.io/openshiftroadshow/ma
+pit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d" in 22.381105774s (22.38112870
+4s including waiting)
+  Normal  Created         32s   kubelet            Created container mapit
+  Normal  Started         31s   kubelet            Started container mapit
 ----
 
 これは、実行しているPodの詳細な説明です。Podがどのノードで動いているか、Podの内部IPアドレス、各種ラベル、その他何が起こっているかについての情報を見ることができます。
@@ -204,7 +213,7 @@ oc get services
 
 ----
 NAME    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-mapit   ClusterIP   172.30.167.160   <none>        8080/TCP,8778/TCP,9779/TCP   26
+mapit   ClusterIP   172.30.178.126   <none>        8080/TCP,8778/TCP,9779/TCP   116s
 ----
 
 NOTE: *Service* のIPアドレスは作成時に動的に割り当てられますが、これは変わることはありません。*Service* のIPアドレスは *Service* が削除されるまで予約されます。
@@ -227,16 +236,19 @@ Labels:            app=mapit
 Annotations:       openshift.io/generated-by: OpenShiftNewApp
 Selector:          deployment=mapit
 Type:              ClusterIP
-IP:                172.30.167.160
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                172.30.178.126
+IPs:               172.30.178.126
 Port:              8080-tcp  8080/TCP
 TargetPort:        8080/TCP
-Endpoints:         10.129.2.99:8080
+Endpoints:         10.128.2.114:8080
 Port:              8778-tcp  8778/TCP
 TargetPort:        8778/TCP
-Endpoints:         10.129.2.99:8778
+Endpoints:         10.128.2.114:8778
 Port:              9779-tcp  9779/TCP
 TargetPort:        9779/TCP
-Endpoints:         10.129.2.99:9779
+Endpoints:         10.128.2.114:9779
 Session Affinity:  None
 Events:            <none>
 ----
@@ -259,60 +271,23 @@ kind: Service
 metadata:
   annotations:
     openshift.io/generated-by: OpenShiftNewApp
-  creationTimestamp: "2020-11-10T21:01:09Z"
+  creationTimestamp: "2023-11-06T01:50:02Z"
   labels:
     app: mapit
     app.kubernetes.io/component: mapit
     app.kubernetes.io/instance: mapit
-  managedFields:
-  - apiVersion: v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          .: {}
-          f:openshift.io/generated-by: {}
-        f:labels:
-          .: {}
-          f:app: {}
-          f:app.kubernetes.io/component: {}
-          f:app.kubernetes.io/instance: {}
-      f:spec:
-        f:ports:
-          .: {}
-          k:{"port":8080,"protocol":"TCP"}:
-            .: {}
-            f:name: {}
-            f:port: {}
-            f:protocol: {}
-            f:targetPort: {}
-          k:{"port":8778,"protocol":"TCP"}:
-            .: {}
-            f:name: {}
-            f:port: {}
-            f:protocol: {}
-            f:targetPort: {}
-          k:{"port":9779,"protocol":"TCP"}:
-            .: {}
-            f:name: {}
-            f:port: {}
-            f:protocol: {}
-            f:targetPort: {}
-        f:selector:
-          .: {}
-          f:deployment: {}
-        f:sessionAffinity: {}
-        f:type: {}
-    manager: oc
-    operation: Update
-    time: "2020-11-10T21:01:09Z"
   name: mapit
   namespace: app-management
-  resourceVersion: "106194"
-  selfLink: /api/v1/namespaces/app-management/services/mapit
-  uid: 921c2e2c-a53e-4f83-8e76-9df962069314
+  resourceVersion: "105644"
+  uid: be6403f6-d217-4fdc-8fc0-7594843af48c
 spec:
-  clusterIP: 172.30.167.160
+  clusterIP: 172.30.178.126
+  clusterIPs:
+  - 172.30.178.126
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
   ports:
   - name: 8080-tcp
     port: 8080
@@ -351,7 +326,7 @@ NOTE: The `-o jsonpath` は特定のフィールドを選択します。この�
 ----
 {
   "deployment": "mapit",
-  "pod-template-hash": "764c5bf8b8"
+  "pod-template-hash": "5c6cc9968c"
 }
 ----
 
@@ -400,7 +375,7 @@ oc get deploy
 
 ----
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-mapit   1/1     1            1           76m
+mapit   1/1     1            1           3m58s
 ----
 
 より詳しく知るために、*ReplicaSet (RS)* について調べることができます。
@@ -416,7 +391,8 @@ oc get rs
 
 ----
 NAME               DESIRED   CURRENT   READY   AGE
-mapit-764c5bf8b8   1         1         1       77m
+mapit-5557448548   0         0         0       4m9s
+mapit-5c6cc9968c   1         1         1       4m6s
 ----
 
 これより、1つの *Pod* がデプロイされることが希望され (Desired)、実際にデプロイされた *Pod* が1つあることがわかります (Current)。希望する *Pod* の数を変更することで、OpenShiftに *Pod* の数を増やしたいか減らしたいかを伝えることができます。
@@ -441,13 +417,11 @@ oc get rs
 
 ----
 NAME               DESIRED   CURRENT   READY   AGE
-mapit-764c5bf8b8   2         2         2       79m
-mapit-8695cb9c67   0         0         0       79m
+mapit-5557448548   0         0         0       5m7s
+mapit-5c6cc9968c   2         2         2       5m4s
 ----
 
-NOTE: 古いバージョンのものが保持されています。これにより、アプリケーションを以前のバージョンに "rollback"することができます。
-
-これで 2つのレプリカができたことがわかります。`oc get pods` コマンドでPodの数を確認してみましょう。
+`oc get pods` コマンドでPodの数を確認してみましょう。
 
 [source,bash,role="execute"]
 ----
@@ -458,8 +432,8 @@ oc get pods
 
 ----
 NAME                     READY   STATUS    RESTARTS   AGE
-mapit-764c5bf8b8-b4vpn   1/1     Running   0          112s
-mapit-764c5bf8b8-l49z7   1/1     Running   0          81m
+mapit-5c6cc9968c-ljmt6   1/1     Running   0          60s
+mapit-5c6cc9968c-n4d27   1/1     Running   0          5m36s
 ----
 
 そして最後に、*Service* が2つのエンドポイントを正しく反映しているかを検証してみましょう。
@@ -480,16 +454,19 @@ Labels:            app=mapit
 Annotations:       openshift.io/generated-by: OpenShiftNewApp
 Selector:          deployment=mapit
 Type:              ClusterIP
-IP:                172.30.167.160
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                172.30.178.126
+IPs:               172.30.178.126
 Port:              8080-tcp  8080/TCP
 TargetPort:        8080/TCP
-Endpoints:         10.128.2.19:8080,10.129.2.99:8080
+Endpoints:         10.128.2.114:8080,10.131.0.88:8080
 Port:              8778-tcp  8778/TCP
 TargetPort:        8778/TCP
-Endpoints:         10.128.2.19:8778,10.129.2.99:8778
+Endpoints:         10.128.2.114:8778,10.131.0.88:8778
 Port:              9779-tcp  9779/TCP
 TargetPort:        9779/TCP
-Endpoints:         10.128.2.19:9779,10.129.2.99:9779
+Endpoints:         10.128.2.114:9779,10.131.0.88:9779
 Session Affinity:  None
 Events:            <none>
 ----
@@ -504,8 +481,8 @@ oc get endpoints mapit
 すると、以下のように表示されます。
 
 ----
-NAME    ENDPOINTS                                                        AGE
-mapit   10.128.2.19:8080,10.129.2.99:8080,10.128.2.19:9779 + 3 more...   81m
+NAME    ENDPOINTS                                                          AGE
+mapit   10.128.2.114:8080,10.131.0.88:8080,10.128.2.114:9779 + 3 more...   6m11s
 ----
 
 各 *Pod* はOpenShift環境内で一意のIPアドレスを受信するため、IPアドレスは異なる可能性があります。エンドポイントのリストは、Serviceの背後にあるPodの数を確認する簡単な方法です。
@@ -535,8 +512,8 @@ oc get pods
 
 ----
 NAME                     READY   STATUS    RESTARTS   AGE
-mapit-764c5bf8b8-lxnvw   1/1     Running   0          2m28s
-mapit-764c5bf8b8-rscss   1/1     Running   0          2m54s
+mapit-5c6cc9968c-ljmt6   1/1     Running   0          2m2s
+mapit-5c6cc9968c-n4d27   1/1     Running   0          6m38s
 ----
 
 *Deployment* `mapit` に属するPodを削除します。
@@ -616,7 +593,7 @@ Routerが存在するホストに `+*.apps...+` を指すワイルドカードDN
 
 このURLにはブラウザや `curl` などのツールを使ってアクセスできます。インターネット上のどこからでもアクセスできるようにしてください。
 
-*Route* は *Service* に関連付けられており、Routerは自動的に *Pod* に直接接続をプロキシします。Router自体は *Pod* として動作し、は「本当の」インターネットとSDNの橋渡しをします。
+*Route* は *Service* に関連付けられており、Routerは自動的に *Pod* に直接接続をプロキシします。Router自体は *Pod* として動作し「本当の」インターネットとSDNの橋渡しをします。
 
 これまでに行ったことを見返してみると、3つのコマンドでアプリケーションをデプロイし、スケールし、外部の世界からアクセスできるようにしました。
 
@@ -738,10 +715,10 @@ oc get replicasets
 
 ----
 NAME               DESIRED   CURRENT   READY   AGE
-mapit-5f695ff4b8   1         1         1       4m19s
-mapit-668f69cdd5   0         0         0       6m18s
-mapit-764c5bf8b8   0         0         0       133m
-mapit-8695cb9c67   0         0         0       133m
+mapit-5557448548   0         0         0       12m
+mapit-5c6cc9968c   0         0         0       12m
+mapit-78947bff67   1         1         1       47s
+mapit-868b5658b    0         0         0       2m21s
 ----
 
 新しいdeploymentがトリガーされるたびに、新しい *ReplicaSet* が作成されます。 +

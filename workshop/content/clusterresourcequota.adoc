@@ -60,11 +60,11 @@ oc get clusterresourcequotas for-user-normaluser1 -o yaml
 apiVersion: quota.openshift.io/v1
 kind: ClusterResourceQuota
 metadata:
-  creationTimestamp: "2022-02-15T00:17:49Z"
+  creationTimestamp: "2023-11-06T07:25:02Z"
   generation: 1
   name: for-user-normaluser1
-  resourceVersion: "59411"
-  uid: 6ab015c7-fd19-4867-9ef3-0b23b60b2efd
+  resourceVersion: "615914"
+  uid: 08eff1ff-fd1c-4f11-9501-4e309293e40a
 spec:
   quota:
     hard:
@@ -73,25 +73,6 @@ spec:
     annotations:
       openshift.io/requester: normaluser1
     labels: null
-status:
-  namespaces:
-  - namespace: welcome1
-    status:
-      hard:
-        pods: "10"
-      used:
-        pods: "1"
-  - namespace: welcome2
-    status:
-      hard:
-        pods: "10"
-      used:
-        pods: "1"
-  total:
-    hard:
-      pods: "10"
-    used:
-      pods: "2"
 ----
 
 ユーザ `normaluser1` は、自身が作成したすべての *Project* で10個以下の *Pod* を作成することができます。これはこのユーザが作成した *Project* (`openshift.io/requester: normaluser1` annotationに基づく) にのみ適用され、このユーザがアクセスできるその他の**Project**には適用されません。これについては後ほど説明します。
@@ -198,15 +179,22 @@ metadata:
     openshift.io/description: ""
     openshift.io/display-name: ""
     openshift.io/requester: normaluser1
-    openshift.io/sa.scc.mcs: s0:c27,c9
-    openshift.io/sa.scc.supplemental-groups: 1000720000/10000
-    openshift.io/sa.scc.uid-range: 1000720000/10000
-  creationTimestamp: "2022-02-15T00:18:30Z"
+    openshift.io/sa.scc.mcs: s0:c30,c25
+    openshift.io/sa.scc.supplemental-groups: 1000920000/10000
+    openshift.io/sa.scc.uid-range: 1000920000/10000
+    operator.tekton.dev/prune.hash: e12cf88878007ab90299fa28c92d42daf72a1
+dda6ff604ea40c1f1da0f1f5e1d
+  creationTimestamp: "2023-11-06T07:27:58Z"
   labels:
     kubernetes.io/metadata.name: welcome1
+    openshift-pipelines.tekton.dev/namespace-reconcile-version: 1.9.0
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/audit-version: v1.24
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/warn-version: v1.24
   name: welcome1
-  resourceVersion: "59245"
-  uid: 75612ea5-aa5d-4c99-a28c-0604efe0f457
+  resourceVersion: "620717"
+  uid: 18b4e779-0522-4dec-a30e-c1a7f4611178
 spec:
   finalizers:
   - kubernetes

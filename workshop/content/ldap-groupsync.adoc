@@ -45,20 +45,20 @@ metadata:
     include.release.openshift.io/self-managed-high-availability: "true"
     include.release.openshift.io/single-node-developer: "true"
     release.openshift.io/create-only: "true"
-  creationTimestamp: "2022-02-09T23:06:59Z"
+  creationTimestamp: "2023-11-06T00:30:47Z"
   generation: 1
   name: cluster
   ownerReferences:
   - apiVersion: config.openshift.io/v1
     kind: ClusterVersion
     name: version
-    uid: c9cbd13c-99bf-4e82-b2ad-690810a01f2f
-  resourceVersion: "1715"
-  uid: 1bedd82d-b235-4e39-af98-e40f411c3c8e
+    uid: f6cb3226-a8a6-4f64-938a-3dfd7fa2eea9
+  resourceVersion: "1635"
+  uid: 031917fc-1cfa-41e0-83cf-172118e48b37
 spec: {}
 ----
 
-ここで注意すべきことがいくつかあります。まず、ここには基本的に何もありません!では、`kubeadmin` ユーザはどのように動作するのでしょうか?OpenShift OAuthシステムは、`kube-system` *Namespace* にある`kubeadmin` *Secret* を探すことができます。次のように調べることができます。
+ここで注意すべきことがいくつかあります。まず、ここには基本的に何もありません。では、`kubeadmin` ユーザはどのように動作するのでしょうか？OpenShift OAuthシステムは、`kube-system` *Namespace* にある`kubeadmin` *Secret* を探すことができます。次のように調べることができます。
 
 [source,bash,role="execute"]
 ----
@@ -71,14 +71,15 @@ oc get secret -n kube-system kubeadmin -o yaml
 ----
 apiVersion: v1
 data:
-  kubeadmin: JDJhJDEwJFYwcVBXRjZGTlNOOU1RYUN6SGtJVGV4T3I5Ym9DbGRTT0VmNS44UGl2cWZOUGdsTnkvb3hT
+  kubeadmin: JDJhJDEwJDhjU0JpR1hOWUIxZkNoRjdIVW5lRnU1bzlQSHVZUkFmYm9QdHVl
+dzkwMzEzRnQ1OG9jZWJx
 kind: Secret
 metadata:
-  creationTimestamp: "2022-02-09T23:06:14Z"
+  creationTimestamp: "2023-11-06T00:29:57Z"
   name: kubeadmin
   namespace: kube-system
-  resourceVersion: "576"
-  uid: 834a86fd-96e6-4d6a-8c16-6eca251b10f0
+  resourceVersion: "442"
+  uid: f68a739c-aa4b-47dd-b55d-5a60c28b3e60
 type: Opaque
 ----
 
@@ -126,7 +127,7 @@ spec:
 
 <2> `mappingMethod: claim`: このセクションは、複数のプロバイダが構成されている場合に、OpenShiftクラスタ内でユーザ名がどのように割り当てられるかに関係しています。詳細については、link:https://docs.openshift.com/container-platform/4.5/authentication/understanding-identity-provider.html#identity-provider-parameters-understanding-identity-provider[Identity provider parameters] のセクションを参照してください。
 
-<3> `attributes`: このセクションでは、OpenShiftユーザの「アカウント」のフィールドに反復して割り当てるLDAPフィールドを定義します。リストを検索する際に属性が見つからない場合や、属性が入力されていない場合は認証全体が失敗します。上の例の場合は、LDAP `dn` からidを、LDAP `mail` からemailアドレスを、LDAP `cn` からの名前を、LDAP `uid` からユーザ名を、それぞれ関連付けます。
+<3> `attributes`: このセクションでは、OpenShiftユーザの「アカウント」のフィールドに反復して割り当てるLDAPフィールドを定義します。リストを検索する際に属性が見つからない場合や、属性が入力されていない場合は認証全体が失敗します。上の例の場合は、LDAP `dn` からidを、LDAP `mail` からemailアドレスを、LDAP `cn` から名前を、LDAP `uid` からユーザ名を、それぞれ関連付けます。
 
 <4> `bindDN`: LDAPを検索する際に、このユーザとしてサーバーにバインドします。
 
@@ -335,7 +336,14 @@ No resources found.
 oc login -u fancyuser1 -p Op#nSh1ft
 ----
 
-同じ `oc get projects` を実行すると、クラスタ内のすべての *Projects* のリストが表示されます。
+同じ `oc get projects` を実行します。
+
+[source,bash,role="execute"]
+----
+oc get projects
+----
+
+クラスタ内のすべての *Projects* のリストが表示されます。
 
 ----
 NAME                                                    DISPLAY NAME                        STATUS
@@ -373,7 +381,7 @@ oc adm new-project app-prod --display-name="Application Production"
 
 [Note]
 ====
-`oc adm new-project` でProjectを作成しても、Project requestプロセスやProject requestテンプレートは使われません。これらのProjectには、デフォルトではクォータや制限範囲が適用されません。クラスタ管理者は他のユーザに「なりすます」ことで、これらのProjectにクォータや制限範囲を適用したい場合には、いくつかのオプションがあります。
+`oc adm new-project` でProjectを作成しても、Project requestプロセスやProject requestテンプレートは使われません。これらのProjectには、デフォルトではクォータや制限範囲が適用されません。クラスタ管理者は他のユーザに「なりすます」ことができるので、これらのProjectにクォータや制限範囲を適用したい場合には、いくつかのオプションがあります。
 
 . 通常のユーザになりすますことを指定するために `--as` を使用して `oc new-project` を指定します。
 . `oc process` を使用して、Project requestテンプレートの値を指定し、createにパイプします(例: `oc process ... | oc create -f -)。これにより、Project requestテンプレート内のすべてのオブジェクトが作成され、その中にはクォータと制限範囲が含まれます。
@@ -474,50 +482,14 @@ See 'oc new-app -h' for examples.
 このエラーは想定通りのものです。
 
 #### Prometheus
-`cluster-reader` 権限を持つユーザ (クラスタ管理の多くの情報を閲覧することができるユーザ) ができたので、Prometheusをもう一度見てみましょう。
 
-`cluster-reader` 権限を持つユーザでログインします。
+PrometheusをLDAPと統合して利用することで、認証・認可機能を強化することができます。PrometheusをLDAPサーバーに対して認証するように設定することで、ユーザーはLDAP認証情報を使ってPrometheusに安全にアクセスすることができます。さらに、LDAP統合により、管理者はきめ細かいアクセス制御ポリシーを定義し、LDAPユーザーグループや属性に基づいてPrometheusの機能を許可または制限することができます。これにより、PrometheusをLDAP管理環境にシームレスに統合することができ、監視・アラート業務のための一元的なユーザー管理とアクセス制御を実現します。
 
-[source,bash,role="execute"]
-----
-oc login -u fancyuser1 -p Op#nSh1ft
-----
-
-`prometheus` の `Route` を検索します。
-
-[source,bash,role="execute"]
-----
-oc get route prometheus-k8s -n openshift-monitoring -o jsonpath='{.spec.host}{"\n"}'
-----
-
-以下のように表示されます。
-
-----
-prometheus-k8s-openshift-monitoring.{{ ROUTE_SUBDOMAIN }}
-----
-
-[Warning]
-====
-先に進む前に、OpenShiftのWebコンソールに移動し、右上の`kube:admin` のドロップダウンメニューからログアウトしてください。そうしないと、Prometheusは認証を通過するためにあなたの `kubeadmin` ユーザを使用しようとします。もちろんこれは動作しますが、`cluster-reader` ロールのデモンストレーションにはなりません。
-====
-インストーラは、デフォルトでPrometheus用の`Route`を設定しています。
-link:https://prometheus-k8s-openshift-monitoring.{{ ROUTE_SUBDOMAIN }}[Prometheus Link]
-をcontrol+クリックしてブラウザで開きます。ログイン画面が出てきたら *Log in with OpenShift* ボタンをクリックして `ldap` auth を選択し、先ほど `cluster-reader` 権限を付与した `fancyuser1` ユーザを使用します。
-
-より細かく言えば、`ose-fancy-dev` グループに `cluster-reader` 権限があり、`fancyuser1` がメンバーです。これらのユーザのパスワードはすべて `Op#nSh1ft` です。自己署名証明書のため、証明書エラーが出ると思います。必ず承諾するようにしましょう。
-
-ログインすると、最初にauthプロキシのパーミッションの承認画面が表示されます。
-
-.Auth Proxy Acceptance.
-image::images/prometheus-auth-proxy.png[]
-
-実際には、あなたとPrometheusコンテナの間のフローの中にOAuthプロキシが存在します。このプロキシは、あなたの認証(AuthenticatioN:AuthN)を確認するためと、また、何が許可されているかの認可(AuthoriZe:AuthZ)のためにに使用されます。ここでは、Prometheusへのアクセスの一部として使用される `fancyuser1` アカウントのパーミッションを明示的に承認しています。_Allow selected permissions_ をクリックします。
-
-この時点でPrometheusが表示されています。アラートは設定されていません。`Status` と `Targets` を見ると、クラスタの現在の状態に関する興味深い情報を見ることができます。
-
-これが終わったら、管理者ユーザーとして再度ログインしてください。
+終了後、管理者ユーザーとして再度ログインしてください。
 
 [source,bash,role="execute"]
 ----
 oc login -u kubeadmin -p {{ KUBEADMIN_PASSWORD }}
 ----
+
+以上でLDAPモジュールの説明を終わります。

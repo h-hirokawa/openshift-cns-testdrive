@@ -5,7 +5,7 @@
 以前の演習では、インフラノードを作成し、 https://docs.openshift.com/container-platform/4.3/nodes/scheduling/nodes-scheduler-node-selectors.html[nodeSelector] を使用して、ワークロードを配置する場所を制御しました。
 あるタスクを実行するために、どのようにノードをセットするかを見てきました。
  `nodePlacement` 内の `nodeSelector` は、あるノードのセットに Pod を引き寄せます。
-しかし、反対に、Pod をなるノードから遠ざけたい場合は、どうすればいいでしょう？
+しかし、反対に、Pod をあるノードから遠ざけたい場合は、どうすればいいでしょう？
 
 Taint された(汚された)ノード上でPodが動作しないようにする事ができます。
 
@@ -112,7 +112,8 @@ oc scale deploy welcome-php --replicas=${NODE_NUMBER}
 oc rollout status deploy welcome-php
 ----
 
-アプリケーションがロールアウトされたら、すべてのノードでリバランスされるように Pod を削除してみましょう。
+Podがノード間で均等に分散されていない場合は、`oc delete pods --all`を実行してリバランスさせる必要があるかもしれません。（その場合は下記を実行してください）
+
 
 [source,bash,role="execute"]
 ----

@@ -25,7 +25,7 @@ OpenShiftのサブスクリプションモデルでは、顧客は追加料金�
 ====
 現在、インフラストラクチャコンポーネントの制御に使用されているOperatorは、"taint" と "toleration" の使用をすべてサポートしているわけではありません。これは、インフラストラクチャのワークロードはインフラストラクチャノード上で実行されますが、他のワークロードがインフラストラクチャノード上で実行されることは特に禁止されていないことを意味します。言い換えれば、すべてのOperatorに taint/toleration が完全に実装されるまでは、ユーザワークロードとインフラストラクチャワークロードが混在する可能性があります。
 
-taint/tolerationの使用は、これらの演習ではカバーされていません。
+taint/tolerationの使用は、この演習ではカバーされていません。
 ====
 
 これを実現するために、`MachineSets` を追加で作成します。
@@ -45,17 +45,18 @@ oc get machineset -n openshift-machine-api -o yaml ${CLUSTERNAME}-worker-${ZONEN
 
 ```YAML
 metadata:
-  creationTimestamp: 2019-01-25T16:00:34Z
-  generation: 1
+  annotations:
+    machine.openshift.io/GPU: "0"
+    machine.openshift.io/memoryMb: "65536"
+    machine.openshift.io/vCPU: "16"
+  creationTimestamp: "2023-11-06T00:31:02Z"
+  generation: 3
   labels:
-    machine.openshift.io/cluster-api-cluster: 190125-3
-    machine.openshift.io/cluster-api-machine-role: worker
-    machine.openshift.io/cluster-api-machine-type: worker
-  name: 190125-3-worker-us-east-1b
+    machine.openshift.io/cluster-api-cluster: cluster-q5kr6-w97nj
+  name: cluster-q5kr6-w97nj-worker-ap-southeast-1c
   namespace: openshift-machine-api
-  resourceVersion: "9027"
-  selfLink: /apis/cluster.k8s.io/v1alpha1/namespaces/openshift-machine-api/machinesets/190125-3-worker-us-east-1b
-  uid: 591b4d06-20ba-11e9-a880-068acb199400
+  resourceVersion: "160525"
+  uid: 4f4368dc-7e20-40d4-aad6-e445b1d23179
 ```
 
 [Note]
@@ -68,14 +69,14 @@ metadata:
 
 ```YAML
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      machine.openshift.io/cluster-api-cluster: 190125-3
-      machine.openshift.io/cluster-api-machineset: 190125-3-worker-us-east-1b
+      machine.openshift.io/cluster-api-cluster: cluster-q5kr6-w97nj
+      machine.openshift.io/cluster-api-machineset: cluster-q5kr6-w97nj-worker-ap-southeast-1c
 ```
 
-この場合、クラスタ名は `190125-3` であり、セット全体のラベルが追加されています。
+この場合、クラスタ名は `cluster-q5kr6-w97nj` であり、セット全体のラベルが追加されています。
 
 ### Template Metadata
 `template` は、`MachineSet` の一部で、`Machine` をテンプレート化するものです。
@@ -83,12 +84,11 @@ spec:
 ```YAML
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        machine.openshift.io/cluster-api-cluster: 190125-3
+        machine.openshift.io/cluster-api-cluster: cluster-q5kr6-w97nj
         machine.openshift.io/cluster-api-machine-role: worker
         machine.openshift.io/cluster-api-machine-type: worker
-        machine.openshift.io/cluster-api-machineset: 190125-3-worker-us-east-1b
+        machine.openshift.io/cluster-api-machineset: cluster-q5kr6-w97nj-worker-ap-southeast-1c
 ```
 
 #### Template Spec
@@ -97,13 +97,13 @@ spec:
 
 この例では、結果として得られるノードが1つ以上の特定のラベルを継承していることを確認したいと思います。上の例で見たように、ラベルは `metadata` セクションにあります。
 ```YAML
-  spec:
-      metadata:
-        creationTimestamp: null
+    spec:
+      lifecycleHooks: {}
+      metadata: {}
       providerSpec:
         value:
           ami:
-            id: ami-08871aee06d13e584
+            id: ami-0f827a1be73b9de83
 ...
 ```
 
@@ -142,7 +142,7 @@ oc get machineset -n openshift-machine-api
 
 ```
 ...
-cluster-city-56f8-mc4pf-infra-us-east-2a    3         3                             13s
+cluster-q5kr6-w97nj-infra-ap-southeast-1a    3         3                             23s
 ...
 ```
 
@@ -161,16 +161,16 @@ oc get nodes
 ----
 
 ```
-NAME                                         STATUS   ROLES          AGE     VERSION
-ip-10-0-133-134.us-east-2.compute.internal   Ready    infra,worker   8m     v1.22.8
-ip-10-0-133-191.us-east-2.compute.internal   Ready    worker         61m    v1.22.8
-ip-10-0-136-83.us-east-2.compute.internal    Ready    master         67m    v1.22.8
-ip-10-0-138-24.us-east-2.compute.internal    Ready    infra,worker   8m1s   v1.22.8
-ip-10-0-139-81.us-east-2.compute.internal    Ready    infra,worker   8m3s   v1.22.8
-ip-10-0-152-132.us-east-2.compute.internal   Ready    worker         61m    v1.22.8
-ip-10-0-157-139.us-east-2.compute.internal   Ready    master         67m    v1.22.8
-ip-10-0-167-9.us-east-2.compute.internal     Ready    worker         61m    v1.22.8
-ip-10-0-169-121.us-east-2.compute.internal   Ready    master         67m    v1.22.8
+NAME                                              STATUS   ROLES                  AGE    VERSION
+ip-10-0-130-208.ap-southeast-1.compute.internal   Ready    infra,worker           52s    v1.25.14+20cda61
+ip-10-0-135-241.ap-southeast-1.compute.internal   Ready    worker                 124m   v1.25.14+20cda61
+ip-10-0-136-214.ap-southeast-1.compute.internal   Ready    infra,worker           51s    v1.25.14+20cda61
+ip-10-0-140-52.ap-southeast-1.compute.internal    Ready    infra,worker           49s    v1.25.14+20cda61
+ip-10-0-142-79.ap-southeast-1.compute.internal    Ready    control-plane,master   134m   v1.25.14+20cda61
+ip-10-0-160-234.ap-southeast-1.compute.internal   Ready    worker                 124m   v1.25.14+20cda61
+ip-10-0-171-226.ap-southeast-1.compute.internal   Ready    control-plane,master   134m   v1.25.14+20cda61
+ip-10-0-205-200.ap-southeast-1.compute.internal   Ready    control-plane,master   134m   v1.25.14+20cda61
+ip-10-0-216-253.ap-southeast-1.compute.internal   Ready    worker                 22m    v1.25.14+20cda61
 ```
 
 どのノードが新しいノードなのか分からなくて困っている場合は、`AGE` カラムを見てみてください。
@@ -182,7 +182,7 @@ oc get nodes -l node-role.kubernetes.io/infra
 ----
 
 ### ラベルを確認する
-この例では、一番若いノードは `ip-10-0-133-134.us-east-2.compute.internal` という名前でした。
+この例では、一番若いノードは `ip-10-0-130-208.ap-southeast-1.compute.internal` という名前でした。
 
 [source,bash,role="execute"]
 ----
@@ -193,7 +193,7 @@ oc get nodes ${YOUNG_INFRA_NODE} --show-labels | grep --color node-role
 そして、`LABELS` の欄には、次のように書かれています。
 
 ```
-beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m5.2xlarge,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-2,failure-domain.beta.kubernetes.io/zone=us-east-2a,kubernetes.io/arch=amd64,kubernetes.io/hostname=ip-10-0-140-3,kubernetes.io/os=linux,node-role.kubernetes.io/infra=,node-role.kubernetes.io/worker=,node.openshift.io/os_id=rhcos
+beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m5.4xlarge,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=ap-southeast-1,failure-domain.beta.kubernetes.io/zone=ap-southeast-1a,kubernetes.io/arch=amd64,kubernetes.io/hostname=ip-10-0-130-208.ap-southeast-1.compute.internal,kubernetes.io/os=linux,node-role.kubernetes.io/infra=,node-role.kubernetes.io/worker=,node.kubernetes.io/instance-type=m5.4xlarge,node.openshift.io/os_id=rhcos
 ```
 
 `node-role.kubernetes.io/infra` ラベルが確認できます。
@@ -204,9 +204,9 @@ beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m5.2xlarge,beta.k
 スクリプトレットで作成した `MachineSet` はすでに3つのレプリカを作成しているので、今のところ何もする必要はありません。また、自分で追加のレプリカを作成する必要もありません。
 
 ### 追加クレジット
-`openshift-machine-api` プロジェクトにはいくつかの `Pods` があります。そのうちの一つは `machine-api-controllers-56bdc6874f-86jnb` のような名前です。その `Pod` のコンテナ上で `oc log` を使うと、ノードを実際に生成するためのさまざまな演算子のビットを見ることができます。
+`openshift-machine-api` プロジェクトにはいくつかの `Pods` があります。そのうちの一つは `machine-api-controllers-56bdc6874f-86jnb` のような名前です。その `Pod` のコンテナ上で `oc log` を使うと、ノードを実際に生成するためのさまざまなOperatorのビットを見ることができます。
 
-## クイック演算子の背景
+## Operatorの背景
 Operatorはただの `Pods` です。しかし 彼らは特別な `Pods` であり、Kubernetes環境でアプリケーションをデプロイして管理する方法を理解しているソフトウェアです。Operatorのパワーは、`CustomResourceDefinitions` (`CRD`)と呼ばれるKubernetesの機能に依存しています。`CRD` はまさにその名の通りの機能です。これらはカスタムリソースを定義する方法であり、本質的にはKubernetes APIを新しいオブジェクトで拡張するものです。
 
 Kubernetesで `Foo` オブジェクトを作成/読み込み/更新/削除できるようにしたい場合、`Foo` リソースとは何か、どのように動作するのかを定義した `CRD` を作成します。そして、`CRD` のインスタンスである `CustomResources` (`CRs`) を作成することができます。
@@ -234,9 +234,12 @@ oc get pods -n openshift-ingress -o wide
 以下のように確認できます。
 
 ```
-NAME                              READY   STATUS    RESTARTS   AGE   IP           NODE                                        NOMINATED NODE
-router-default-7bc4c9c5cd-clwqt   1/1     Running   0          9h    10.128.2.7   ip-10-0-144-70.us-east-2.compute.internal   <none>
-router-default-7bc4c9c5cd-fq7m2   1/1     Running   0          9h    10.131.0.7   ip-10-0-138-38.us-east-2.compute.internal   <none>
+NAME                              READY   STATUS    RESTARTS   AGE    IP            NODE
+                            NOMINATED NODE   READINESS GATES
+router-default-775577dc75-dhwwn   1/1     Running   0          146m   10.131.0.67   ip-10-0-160-234.ap-sou
+theast-1.compute.internal   <none>           <none>
+router-default-775577dc75-pcmxk   1/1     Running   0          146m   10.128.2.97   ip-10-0-135-241.ap-sou
+theast-1.compute.internal   <none>           <none>
 ```
 
 ルータが動作している `Node` を確認します。
@@ -250,8 +253,8 @@ oc get node ${ROUTER_POD_NODE}
 `worker` の役割が指定されていることが確認できます。
 
 ```
-NAME                                        STATUS   ROLES    AGE   VERSION
-ip-10-0-144-70.us-east-2.compute.internal   Ready    worker   9h    v1.12.4+509916ce1
+NAME                                              STATUS   ROLES    AGE    VERSION
+ip-10-0-160-234.ap-southeast-1.compute.internal   Ready    worker   3h7m   v1.25.14+20cda61
 ```
 
 ルータオペレータのデフォルトの設定では、`worker` の役割を持つノードを見つけてルータを配置するようになっています。しかし、専用のインフラストラクチャノードを作成したので、ルータインスタンスを `infra` の役割を持つノードに配置するようにオペレータに指示します。
@@ -269,19 +272,18 @@ oc get ingresses.config.openshift.io cluster -o yaml
 apiVersion: config.openshift.io/v1
 kind: Ingress
 metadata:
-  creationTimestamp: 2019-04-08T14:37:49Z
+  creationTimestamp: "2023-11-06T00:30:07Z"
   generation: 1
   name: cluster
-  resourceVersion: "396"
-  selfLink: /apis/config.openshift.io/v1/ingresses/cluster
-  uid: e1ec463c-5a0b-11e9-93e8-028b0fb1636c
+  resourceVersion: "67230"
+  uid: 191cc9b5-7887-411d-b3c5-00558e2dfb6e
 spec:
   domain: {{ ROUTE_SUBDOMAIN }}
 status: {}
 ```
 
 個々のルータのデプロイは `ingresscontrollers.operator.openshift.io` CRD で管理されます。
-名前空間 `openshift-ingress-operator` に作成されたデフォルトのものがあります。
+ネームスペース `openshift-ingress-operator` に作成されたデフォルトのものがあります。
 
 
 [source,bash,role="execute"]
@@ -295,26 +297,123 @@ oc get ingresscontrollers.operator.openshift.io default -n openshift-ingress-ope
 apiVersion: operator.openshift.io/v1
 kind: IngressController
 metadata:
-  creationTimestamp: 2019-04-08T14:46:15Z
+  creationTimestamp: "2023-11-06T00:36:44Z"
   finalizers:
-  - ingress.openshift.io/ingress-controller
+  - ingresscontroller.operator.openshift.io/finalizer-ingresscontroller
   generation: 2
   name: default
   namespace: openshift-ingress-operator
-  resourceVersion: "2056085"
-  selfLink: /apis/operator.openshift.io/v1/namespaces/openshift-ingress-operator/ingresscontrollers/default
-  uid: 0fac160d-5a0d-11e9-a3bb-02d64e703494
-spec: {}
+  resourceVersion: "64195"
+  uid: fc2d20ec-f693-4ce2-880e-cbb289fe6ad4
+spec:
+  clientTLS:
+    clientCA:
+      name: ""
+    clientCertificatePolicy: ""
+  defaultCertificate:
+    name: ingress-certs-2023-11-06
+  httpCompression: {}
+  httpEmptyRequestsPolicy: Respond
+  httpErrorCodePages:
+    name: ""
+  replicas: 2
+  tuningOptions:
+    reloadInterval: 0s
+  unsupportedConfigOverrides: null
 status:
   availableReplicas: 2
   conditions:
-  - lastTransitionTime: 2019-04-08T14:47:14Z
+  - lastTransitionTime: "2023-11-06T00:36:49Z"
+    reason: Valid
+    status: "True"
+    type: Admitted
+  - lastTransitionTime: "2023-11-06T00:42:53Z"
+    status: "True"
+    type: PodsScheduled
+  - lastTransitionTime: "2023-11-06T00:43:24Z"
+    message: The deployment has Available status condition set to True
+    reason: DeploymentAvailable
+    status: "True"
+    type: DeploymentAvailable
+  - lastTransitionTime: "2023-11-06T00:43:24Z"
+    message: Minimum replicas requirement is met
+    reason: DeploymentMinimumReplicasMet
+    status: "True"
+    type: DeploymentReplicasMinAvailable
+  - lastTransitionTime: "2023-11-06T01:23:02Z"
+    message: All replicas are available
+    reason: DeploymentReplicasAvailable
+    status: "True"
+    type: DeploymentReplicasAllAvailable
+  - lastTransitionTime: "2023-11-06T01:23:02Z"
+    message: Deployment is not actively rolling out
+    reason: DeploymentNotRollingOut
+    status: "False"
+    type: DeploymentRollingOut
+  - lastTransitionTime: "2023-11-06T00:36:50Z"
+    message: The endpoint publishing strategy supports a managed load balancer
+    reason: WantedByEndpointPublishingStrategy
+    status: "True"
+    type: LoadBalancerManaged
+  - lastTransitionTime: "2023-11-06T00:41:20Z"
+    message: The LoadBalancer service is provisioned
+    reason: LoadBalancerProvisioned
+    status: "True"
+    type: LoadBalancerReady
+  - lastTransitionTime: "2023-11-06T00:36:50Z"
+    message: LoadBalancer is not progressing
+    reason: LoadBalancerNotProgressing
+    status: "False"
+    type: LoadBalancerProgressing
+  - lastTransitionTime: "2023-11-06T00:36:50Z"
+    message: DNS management is supported and zones are specified in the cluster DNS
+      config.
+    reason: Normal
+    status: "True"
+    type: DNSManaged
+  - lastTransitionTime: "2023-11-06T00:41:43Z"
+    message: The record is provisioned in all reported zones.
+    reason: NoFailedZones
+    status: "True"
+    type: DNSReady
+  - lastTransitionTime: "2023-11-06T00:43:24Z"
     status: "True"
     type: Available
-  domain: apps.cluster-f4a3.f4a3.openshiftworkshop.com
+  - lastTransitionTime: "2023-11-06T01:23:02Z"
+    status: "False"
+    type: Progressing
+  - lastTransitionTime: "2023-11-06T00:43:39Z"
+    status: "False"
+    type: Degraded
+  - lastTransitionTime: "2023-11-06T00:36:50Z"
+    message: IngressController is upgradeable.
+    reason: Upgradeable
+    status: "True"
+    type: Upgradeable
+  - lastTransitionTime: "2023-11-06T00:36:50Z"
+    message: No evaluation condition is detected.
+    reason: NoEvaluationCondition
+    status: "False"
+    type: EvaluationConditionsDetected
+  - lastTransitionTime: "2023-11-06T00:43:39Z"
+    message: Canary route checks for the default ingress controller are successful
+    reason: CanaryChecksSucceeding
+    status: "True"
+    type: CanaryChecksSucceeding
+  domain: apps.cluster-q5kr6.q5kr6.sandbox6.opentlc.com
   endpointPublishingStrategy:
+    loadBalancer:
+      dnsManagementPolicy: Managed
+      providerParameters:
+        aws:
+          classicLoadBalancer:
+            connectionIdleTimeout: 0s
+          type: Classic
+        type: AWS
+      scope: External
     type: LoadBalancerService
-  selector: ingress.operator.openshift.io/ingress-controller-deployment=default
+  observedGeneration: 2
+  selector: ingresscontroller.operator.openshift.io/deployment-ingresscontroller=default
 ```
 
 ルータPodがインフラストラクチャノードにヒットするように指示する `nodeSelector` を指定するには、以下の設定を適用します。
@@ -324,6 +423,7 @@ status:
 oc apply -f {{ HOME_PATH }}/support/ingresscontroller.yaml
 ----
 
+`Warning: resource is missing the kubectl.kubernetes.io/last-applied-config`のようなエラーが表示されるかもしれません。これは正常で、applyを実行すると、リソースに対して "3 way diff merge" が実行されます。ingress controllerはインストール時に作成されたばかりなので、 "last applied" configurationはありません。このコマンドを再実行すると、この警告は表示されなくなるはずです。
 
 実行:
 
@@ -359,41 +459,38 @@ oc get configs.imageregistry.operator.openshift.io/cluster -o yaml
 apiVersion: imageregistry.operator.openshift.io/v1
 kind: Config
 metadata:
-  creationTimestamp: "2019-08-06T13:57:22Z"
+  creationTimestamp: "2023-11-06T00:42:40Z"
   finalizers:
   - imageregistry.operator.openshift.io/finalizer
   generation: 2
   name: cluster
-  resourceVersion: "13218"
-  selfLink: /apis/imageregistry.operator.openshift.io/v1/configs/cluster
-  uid: 1cb6272a-b852-11e9-9a54-02fdf1f6ca7a
+  resourceVersion: "189466"
+  uid: eca21c44-1879-4928-b1b9-69b890fbda59
 spec:
-  defaultRoute: false
-  httpSecret: fff8bb0952d32e0aa56adf0ac6f6cf5267e0627f7b42e35c508050b5be426f8fd5e5108bea314f4291eeacc0b95a2ea9f842b54d7eb61522238f2a2dc471f131
-  logging: 2
+  httpSecret: e15e7536849d6ffd15371669f4ec943e9e29824321e24b3ea639ca26d34bc2a9808d21e197e75a57cde491ca8f66
+5612d1204cb3b5187b5254cb9ebd5c85f27d
+  logLevel: Normal
   managementState: Managed
-  proxy:
-    http: ""
-    https: ""
-    noProxy: ""
-  readOnly: false
-  replicas: 1
+  observedConfig: null
+  operatorLogLevel: Normal
+  proxy: {}
+  replicas: 2
   requests:
     read:
-      maxInQueue: 0
-      maxRunning: 0
       maxWaitInQueue: 0s
     write:
-      maxInQueue: 0
-      maxRunning: 0
       maxWaitInQueue: 0s
+  rolloutStrategy: RollingUpdate
   storage:
+    managementState: Managed
     s3:
-      bucket: image-registry-us-east-2-0a598598fc1649d8b96ed91a902b982c-1cbd
+      bucket: cluster-q5kr6-w97nj-image-registry-ap-southeast-1-uxuigubninuh
       encrypt: true
-      keyID: ""
-      region: us-east-2
-      regionEndpoint: ""
+      region: ap-southeast-1
+      trustedCA:
+        name: ""
+      virtualHostedStyle: false
+  unsupportedConfigOverrides: null
 status:
 ...
 ```
@@ -409,8 +506,8 @@ oc patch configs.imageregistry.operator.openshift.io/cluster -p '{"spec":{"nodeS
 
 [Note]
 ====
-この時点では、画像レジストリは演算子のために別のプロジェクトを使用していません。
-演算子とオペランドは両方とも `openshift-image-registry` プロジェクトの中にあります。
+この時点では、イメージレジストリはOperatorのために別のプロジェクトを使用していません。
+Operatorとオペランドは両方とも `openshift-image-registry` プロジェクトの中にあります。
 ====
 
 パッチコマンドを実行すると、レジストリPodがinfraノードに移動しているのがわかるはずです。
@@ -433,7 +530,7 @@ oc get pod -n openshift-image-registry
 
 レジストリが着地したノード(ルータのセクションを参照)を見てみると、それが現在infraワーカー上で実行されていることに気づくでしょう。
 
-最後に、イメージレジストリの設定のための `CRD` が名前空間ではなく、クラスタスコープになっていることに注目してください。
+最後に、イメージレジストリの設定のための `CRD` がネームスペースではなく、クラスタスコープになっていることに注目してください。
 OpenShiftクラスタごとに内部/統合レジストリは1つしかありません。
 
 ## Monitoring
