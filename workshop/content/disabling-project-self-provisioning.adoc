@@ -72,7 +72,7 @@ Subjects:
 
 [Note]
 ====
-OpenShiftに付属するさまざまなロールに興味がある場合は、link:https://docs.openshift.com/container-platform/4.5/authentication/using-rbac.html[Role-Based
+OpenShiftに付属するさまざまなロールに興味がある場合は、link:https://docs.openshift.com/container-platform/4.12/authentication/using-rbac.html[Role-Based
 Access Control (RBAC)] のドキュメントで詳しく説明されています。
 ====
 

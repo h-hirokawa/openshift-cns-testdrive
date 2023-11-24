@@ -199,7 +199,7 @@ OpenShiftにイメージを実行するよう依頼することで、`new-app` �
 *Services* には固定IPアドレスが割り当てられ、多くのポートやプロトコルをマッピングすることができます。
 
 手作業で作成するためのYAML形式など、
-https://docs.openshift.com/container-platform/4.9/architecture/understanding-development.html#understanding-kubernetes-pods[Services]
+https://docs.openshift.com/container-platform/4.12/architecture/understanding-development.html[Services]
 については公式ドキュメントに多くの情報があります。
 
 それではProject内の *Service* のリストを見てみましょう。
@@ -365,8 +365,7 @@ Use Deployment objects unless you need a specific feature or behavior provided b
 *Deployment* や *Service* を必要としない *Pod* や *RS* が求められるエッジケースもありますが、これらはこの演習では説明しない高度なトピックです。
 
 NOTE: 以前のOpenShiftのバージョンでは *DeploymentConfig* と呼ばれるものが使用されていました。まだ有効なメカニズムですが、*Deployment* に移行しており、`oc new-app` コマンドによって何が作成されるのかは
-https://docs.openshift.com/container-platform/4.12/applications/deployments/what-deployments-are.html[official
-documentation] を参照してください。
+https://docs.openshift.com/container-platform/4.12/applications/deployments/what-deployments-are.html[official documentation] を参照してください。
 
 ### Deploymentに関連するオブジェクトの探索
 
@@ -632,7 +631,7 @@ Liveness Probeは、設定されているコンテナが実行されているか
 Readiness Probeは、コンテナがリクエストをサービスする準備ができているかどうかを判断します。Readiness Probeが失敗した場合、エンドポイントのコントローラは、コンテナのIPアドレスをマッチするはずのすべての *Service* のエンドポイントから削除します。Readiness Probeは、コンテナが実行中であっても、トラフィックを受信すべきではないことをエンドポイントのコントローラに知らせるために使用することができます。
 
 アプリケーションのProbeに関する詳細は、ドキュメントの
-https://docs.openshift.com/container-platform/4.9/applications/application-health.html[Application
+https://docs.openshift.com/container-platform/4.12/applications/application-health.html[Application
 Health] セクションを参照してください。
 
 ### アプリケーションへのProbeの追加

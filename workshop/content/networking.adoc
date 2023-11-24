@@ -3,7 +3,7 @@
 
 == 演習の概要
 OpenShift は プラットフォーム内部に Open vSwitch をベースにしたOpenShiftSDN（Software Defined Network）を持っています。
-しかしこのラボで使用するクラスタではCNIとしてOVNKubernetes SDNを使用します。OVNKubernetesは Open Virtual Network をベースとしており、将来的にOpenShiftのデフォルトになることが計画されています。OVNKubernetes は OpenShiftSDN に対し後方互換性を持っています。より詳しく知りたい場合、link:https://docs.openshift.com/container-platform/4.9/networking/ovn_kubernetes_network_provider/about-ovn-kubernetes.html[公式ドキュメント]を参照して下さい。
+しかしこのラボで使用するクラスタではCNIとしてOVNKubernetes SDNを使用します。OVNKubernetesは Open Virtual Network をベースとしており、将来的にOpenShiftのデフォルトになることが計画されています。OVNKubernetes は OpenShiftSDN に対し後方互換性を持っています。より詳しく知りたい場合、link:https://docs.openshift.com/container-platform/4.12/networking/ovn_kubernetes_network_provider/about-ovn-kubernetes.html[公式ドキュメント]を参照して下さい。
 
 この SDN は OpenShift 環境内のアプリケーションコンポーネント間の接続性を提供するために使用されます。
 ネットワークにはデフォルトのネットワーク範囲があらかじめ設定されていますが、既存のインフラストラクチャと競合する場合やその他の理由で変更することも可能です。

@@ -2,7 +2,7 @@
 :experimental:
 
 == 演習の概要
-以前の演習では、インフラノードを作成し、 https://docs.openshift.com/container-platform/4.3/nodes/scheduling/nodes-scheduler-node-selectors.html[nodeSelector] を使用して、ワークロードを配置する場所を制御しました。
+以前の演習では、インフラノードを作成し、 https://docs.openshift.com/container-platform/4.12/nodes/scheduling/nodes-scheduler-node-selectors.html[nodeSelector] を使用して、ワークロードを配置する場所を制御しました。
 あるタスクを実行するために、どのようにノードをセットするかを見てきました。
  `nodePlacement` 内の `nodeSelector` は、あるノードのセットに Pod を引き寄せます。
 しかし、反対に、Pod をあるノードから遠ざけたい場合は、どうすればいいでしょう？
@@ -204,7 +204,7 @@ oc rollout status deploy welcome-php
 oc get pods -o wide | grep -c ${TTNODE}
 ----
 
-Pod が実行されている場所を調べる。
+Pod が実行されている場所を調べます。
 
 [source,bash,role="execute"]
 ----
@@ -212,6 +212,8 @@ clear
 oc get pods -o=custom-columns=NAME:.metadata.name,NODE:.spec.nodeName
 oc get nodes -l appnode=welcome-php
 ----
+
+Podは3つありますが、2つのノード上で稼働していることがわかります。
 
 #### Toleration
 
@@ -273,7 +275,7 @@ oc get pods -o=custom-columns=NAME:.metadata.name,NODE:.spec.nodeName
 oc get nodes -l appnode=welcome-php
 ----
 
-Taint と Toleration について、もっと良く知るには、https://docs.openshift.com/container-platform/4.2/nodes/scheduling/nodes-scheduler-taints-tolerations.html[Official Documentation] を読んでみて下さい。
+Taint と Toleration について、もっと良く知るには、 https://docs.openshift.com/container-platform/4.12/nodes/scheduling/nodes-scheduler-taints-tolerations.html[Official Documentation] を読んでみて下さい。
 
 #### クリーンアップ
 

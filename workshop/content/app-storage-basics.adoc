@@ -140,13 +140,11 @@ oc get persistentvolume
 ----
 NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM
                     STORAGECLASS   REASON   AGE
-pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39   1Gi        RWO            Delete           Bound    app-managem
-ent/mapit-storage   gp3-csi                 3m31s
-pvc-b2bdd83b-4ca6-4af2-8695-9a0b90314ae8   100Gi      RWO            Delete           Bound    stackrox/ce
-ntral-db            gp3-csi                 63m
+pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39   1Gi        RWO            Delete           Bound    app-management/mapit-storage   gp3-csi                 3m31s
+pvc-b2bdd83b-4ca6-4af2-8695-9a0b90314ae8   100Gi      RWO            Delete           Bound    stackrox/central-db            gp3-csi                 63m
 ----
 
-`pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39`は、先ほどのClaimの結果として作成された `Persistent Volume` です。この `app-management` Project に存在するClaimにBindされている(*Bound*)ことに注意してください。
+`CLAIM` の欄が `app-management/mapit-storage` となっているものは、先ほどのClaimの結果として作成された `Persistent Volume` です。この `app-management` Project に存在するClaimにBindされている(*Bound*)ことに注意してください。
 
 [source,bash,role="execute"]
 ----

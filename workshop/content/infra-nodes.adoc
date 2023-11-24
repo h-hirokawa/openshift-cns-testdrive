@@ -206,6 +206,11 @@ beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m5.4xlarge,beta.k
 ### 追加クレジット
 `openshift-machine-api` プロジェクトにはいくつかの `Pods` があります。そのうちの一つは `machine-api-controllers-56bdc6874f-86jnb` のような名前です。その `Pod` のコンテナ上で `oc log` を使うと、ノードを実際に生成するためのさまざまなOperatorのビットを見ることができます。
 
+```
+(例)
+oc logs machine-api-controllers-56bdc6874f-86jnb -c machine-controller -n openshift-machine-api
+```
+
 ## Operatorの背景
 Operatorはただの `Pods` です。しかし 彼らは特別な `Pods` であり、Kubernetes環境でアプリケーションをデプロイして管理する方法を理解しているソフトウェアです。Operatorのパワーは、`CustomResourceDefinitions` (`CRD`)と呼ばれるKubernetesの機能に依存しています。`CRD` はまさにその名の通りの機能です。これらはカスタムリソースを定義する方法であり、本質的にはKubernetes APIを新しいオブジェクトで拡張するものです。
 

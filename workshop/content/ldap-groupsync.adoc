@@ -1,7 +1,7 @@
 = 外部認証プロバイダ(LDAP)の設定
 
 == 演習の概要
-OpenShiftは多くの異なる認証プロバイダをサポートしています。完全なリストは link:https://docs.openshift.com/container-platform/4.5/authentication/understanding-identity-provider.html[understanding
+OpenShiftは多くの異なる認証プロバイダをサポートしています。完全なリストは link:https://docs.openshift.com/container-platform/4.12/authentication/understanding-identity-provider.html[understanding
 identity provider configuration] に記載されています。最も一般的に使用されている認証プロバイダの1つはLDAPです。Microsoft Active Directoryによって提供されているか、他のソースから提供されているかにはよりません。
 
 OpenShiftはLDAPサーバーに対してユーザ認証を実行することができます。LDAPのグループメンバーシップに基づいて、グループメンバーシップと特定のRBAC属性を設定することもできます。
@@ -125,7 +125,7 @@ spec:
 
 <1> `name`: プロバイダの一意のID。OpenShift環境では複数の認証プロバイダを持つことが可能で、OpenShiftはそれらを区別することができます。
 
-<2> `mappingMethod: claim`: このセクションは、複数のプロバイダが構成されている場合に、OpenShiftクラスタ内でユーザ名がどのように割り当てられるかに関係しています。詳細については、link:https://docs.openshift.com/container-platform/4.5/authentication/understanding-identity-provider.html#identity-provider-parameters-understanding-identity-provider[Identity provider parameters] のセクションを参照してください。
+<2> `mappingMethod: claim`: このセクションは、複数のプロバイダが構成されている場合に、OpenShiftクラスタ内でユーザ名がどのように割り当てられるかに関係しています。詳細については、link:https://docs.openshift.com/container-platform/4.12/authentication/understanding-identity-provider.html#identity-provider-parameters_understanding-identity-provider[Identity provider parameters] のセクションを参照してください。
 
 <3> `attributes`: このセクションでは、OpenShiftユーザの「アカウント」のフィールドに反復して割り当てるLDAPフィールドを定義します。リストを検索する際に属性が見つからない場合や、属性が入力されていない場合は認証全体が失敗します。上の例の場合は、LDAP `dn` からidを、LDAP `mail` からemailアドレスを、LDAP `cn` から名前を、LDAP `uid` からユーザ名を、それぞれ関連付けます。
 
@@ -137,7 +137,7 @@ spec:
 
 <7> `url`: LDAPサーバーのURLです。
 
-OpenShiftにおけるLDAP認証の具体的な詳細については、link:https://docs.openshift.com/container-platform/4.10/authentication/identity_providers/configuring-ldap-identity-provider.html[Configuring
+OpenShiftにおけるLDAP認証の具体的な詳細については、link:https://docs.openshift.com/container-platform/4.12/authentication/identity_providers/configuring-ldap-identity-provider.html[Configuring
 an LDAP identity provider]のドキュメントを参照してください。
 
 LDAP IDプロバイダを設定するには、以下を行う必要があります。
@@ -192,7 +192,7 @@ oc rollout status deployment/oauth-openshift -n openshift-authentication
 ----
 
 #### LDAPグループをOpenShiftグループに同期する
-OpenShiftでは、グループを使用してユーザを管理し、複数のユーザの権限を一度に制御することができます。LDAPでグループを同期する方法については、link:https://docs.openshift.com/container-platform/4.10/authentication/ldap-syncing.html[Syncing LDAP groups
+OpenShiftでは、グループを使用してユーザを管理し、複数のユーザの権限を一度に制御することができます。LDAPでグループを同期する方法については、link:https://docs.openshift.com/container-platform/4.12/authentication/ldap-syncing.html[Syncing LDAP groups
 ]の中にセクションがあります。グループを同期するには、`cluster-admin` 権限を持つユーザとしてOpenShiftにログインした状態で `groupsync` というプログラムを実行し、OpenShiftが様々なグループ内で見つけたユーザをどうするかを指示する設定ファイルを使う必要があります。
 
 このラボでは次のような `groupsync` の設定ファイルを提供しています。
@@ -305,7 +305,7 @@ oc adm policy add-cluster-role-to-group cluster-reader ose-fancy-dev
 
 [Note]
 ====
-OpenShiftに付属するさまざまなロールに興味がある方は、link:https://docs.openshift.com/container-platform/4.10/authentication/using-rbac.html[Role-Based Access Control (RBAC)^] のドキュメントを参照してください。
+OpenShiftに付属するさまざまなロールに興味がある方は、link:https://docs.openshift.com/container-platform/4.12/authentication/using-rbac.html[Role-Based Access Control (RBAC)^] のドキュメントを参照してください。
 ====
 
 #### cluster-reader ポリシーを調べる

@@ -26,7 +26,7 @@ Logging スタックはそのラボで作成された `infra` ノードにイン
 [Note]
 ====
 詳細は、以下にあるOpenShiftの公式ドキュメントサイトに記載されています。:
- https://docs.openshift.com/container-platform/4.10/logging/cluster-logging.html
+ https://docs.openshift.com/container-platform/4.12/logging/cluster-logging.html
 ====
 
 [Note]
@@ -443,7 +443,7 @@ output URL スキームが TLS (HTTPS、TLS、または UDPS) を必要とする
 * inputは、特定のプロジェクトに関連付けられたアプリケーションログをパイプラインに転送します。
 
 詳細については、
-link:https://docs.openshift.com/container-platform/4.10/logging/cluster-logging-external.html[OpenShiftの公式ドキュメントサイト]をご覧ください。
+link:https://docs.openshift.com/container-platform/4.12/logging/log_collection_forwarding/log-forwarding.html[OpenShiftの公式ドキュメントサイト]をご覧ください。
 
 #### 外部Syslogサーバーへのログの送信
 
