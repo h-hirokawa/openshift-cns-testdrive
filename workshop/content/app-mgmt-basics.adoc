@@ -345,12 +345,19 @@ NOTE: The `-o jsonpath` は特定のフィールドを選択します。この�
 *Service* が *Pod* のルーティングとロードバランシングを提供するのに対し、 *ReplicaSets (RS)* は、必要な数の *Pod*(=レプリカ) を確実に存在させるために使用されます。 +
 例えば、アプリケーションを常に3つの *Pod* にスケールさせておきたい場合は、*ReplicaSet* が必要になります。*ReplicaSet* がないと、何らかの理由で停止・終了した *Pod* は自動的に再作成されません。*ReplicaSet* はOpenShiftが「自己修復」する方法を提供します。
 
-*Deployment* (deploy) はOpenShift内の何かをどのようにデプロイするかを定義します。以下は https://docs.openshift.com/container-platform/4.9/applications/deployments/what-deployments-are.html#deployments-kube-deployments_what-deployments-are[deployments documentation^] の抜粋です。
+*Deployment* (deploy) はOpenShift内の何かをどのようにデプロイするかを定義します。以下は https://docs.openshift.com/container-platform/4.12/applications/deployments/what-deployments-are.html[deployments documentation^] の抜粋です。
 
 ----
-Deployments describe the desired state of a particular component of an
-application as a Pod template. Deployments create ReplicaSets, which
-orchestrate Pod lifecycles.
+The Deployment and DeploymentConfig API objects in OpenShift Container Platform provide two similar but different methods for fine-grained management over common user applications. They are composed of the following separate API objects:
+
+    A Deployment or DeploymentConfig object, either of which describes the desired state of a particular component of the application as a pod template.
+
+    Deployment objects involve one or more replica sets, which contain a point-in-time record of the state of a deployment as a pod template. Similarly, DeploymentConfig objects involve one or more replication controllers, which preceded replica sets.
+
+    One or more pods, which represent an instance of a particular version of an application.
+
+Use Deployment objects unless you need a specific feature or behavior provided by DeploymentConfig objects.
+
 ----
 
 ほとんどの場合、*Pod* , *Service* , *ReplicaSet* , *Deployment* のリソースを一緒に使用することになります。そして、ほとんどの場合、OpenShiftがすべてのリソースを作成してくれます。
@@ -358,7 +365,7 @@ orchestrate Pod lifecycles.
 *Deployment* や *Service* を必要としない *Pod* や *RS* が求められるエッジケースもありますが、これらはこの演習では説明しない高度なトピックです。
 
 NOTE: 以前のOpenShiftのバージョンでは *DeploymentConfig* と呼ばれるものが使用されていました。まだ有効なメカニズムですが、*Deployment* に移行しており、`oc new-app` コマンドによって何が作成されるのかは
-https://docs.openshift.com/container-platform/4.9/applications/deployments/what-deployments-are.html#deployments-comparing-deploymentconfigs_what-deployments-are[official
+https://docs.openshift.com/container-platform/4.12/applications/deployments/what-deployments-are.html[official
 documentation] を参照してください。
 
 ### Deploymentに関連するオブジェクトの探索
@@ -701,8 +708,6 @@ oc get deployments
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
 mapit   1/1     1            1           131m
 ----
-
-最初のdeploymentの後に2つの構成変更を行ったため、*Deployment* の4番目のリビジョンになっています。
 
 以下を実行して下さい。
 

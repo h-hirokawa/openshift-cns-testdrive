@@ -51,14 +51,12 @@ deployment.apps/mapit volume updated
 最初のステップでは、*PersistentVolumeClaim* が作成されました。このオブジェクトは、ユーザーからOpenShiftへの一定の容量を持つ特定の種類のストレージのリクエストを表しています。
 次に、`mapit` の `Deployment` を更新して、このストレージを参照し、*Pod* 内の `/app-storage` ディレクトリで利用できるようにしています。
 
-このように新しい `Deployment` が表示されます。
+このように `Deployment` が表示されます。
 
 [source,bash,role="execute"]
 ----
 oc get deploy mapit
 ----
-
-出力を見ると、ストレージの更新によって新しいリビジョンが作成されたことがわかります。
 
 ----
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
