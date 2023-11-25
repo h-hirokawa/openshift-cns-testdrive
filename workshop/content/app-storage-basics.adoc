@@ -154,10 +154,8 @@ oc get persistentvolumeclaim -n app-management
 以下のように表示されます。
 
 ----
-NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS
-   AGE
-mapit-storage   Bound    pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39   1Gi        RWO            gp3-csi
-   5m10s
+NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mapit-storage   Bound    pvc-8e4e783e-9038-46be-9f9b-46a81c7b4d39   1Gi        RWO            gp3-csi   5m10s
 ----
 
 ### 永続ストレージのテスト

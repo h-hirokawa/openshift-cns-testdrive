@@ -44,8 +44,7 @@ oc new-app quay.io/openshiftroadshow/mapit
     deployment.apps "mapit" created
     service "mapit" created
 --> Success
-    Application is not exposed. You can expose services to the outside world by executing one or more of t
-he commands below:
+    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
      'oc expose service/mapit'
     Run 'oc status' to view your app.
 ----
@@ -100,8 +99,7 @@ Start Time:   Mon, 06 Nov 2023 01:50:05 +0000
 Labels:       deployment=mapit
               pod-template-hash=5c6cc9968c
 Annotations:  k8s.ovn.org/pod-networks:
-                {"default":{"ip_addresses":["10.128.2.114/23"],"mac_address":"0a:58:0a:80:02:72","gateway_
-ips":["10.128.2.1"],"ip_address":"10.128.2.114/2...
+                {"default":{"ip_addresses":["10.128.2.114/23"],"mac_address":"0a:58:0a:80:02:72","gateway_ips":["10.128.2.1"],"ip_address":"10.128.2.114/2...
               k8s.v1.cni.cncf.io/network-status:
                 [{
                     "name": "ovn-kubernetes",
@@ -135,10 +133,8 @@ Controlled By:  ReplicaSet/mapit-5c6cc9968c
 Containers:
   mapit:
     Container ID:   cri-o://fa2701f135bb807757f528a6115d7341934869e65c798a61908279ec65146c2a
-    Image:          quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd1
-0e0d80939efd1de9d
-    Image ID:       quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd1
-0e0d80939efd1de9d
+    Image:          quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d
+    Image ID:       quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d
     Ports:          8080/TCP, 8778/TCP, 9779/TCP
     Host Ports:     0/TCP, 0/TCP, 0/TCP
     State:          Running
@@ -170,14 +166,10 @@ Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists fo
 Events:
   Type    Reason          Age   From               Message
   ----    ------          ----  ----               -------
-  Normal  Scheduled       55s   default-scheduler  Successfully assigned app-management/mapit-5c6cc9968c-n
-4d27 to ip-10-0-135-241.ap-southeast-1.compute.internal
+  Normal  Scheduled       55s   default-scheduler  Successfully assigned app-management/mapit-5c6cc9968c-n4d27 to ip-10-0-135-241.ap-southeast-1.compute.internal
   Normal  AddedInterface  54s   multus             Add eth0 [10.128.2.114/23] from ovn-kubernetes
-  Normal  Pulling         54s   kubelet            Pulling image "quay.io/openshiftroadshow/mapit@sha256:1
-366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d"
-  Normal  Pulled          32s   kubelet            Successfully pulled image "quay.io/openshiftroadshow/ma
-pit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d" in 22.381105774s (22.38112870
-4s including waiting)
+  Normal  Pulling         54s   kubelet            Pulling image "quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d"
+  Normal  Pulled          32s   kubelet            Successfully pulled image "quay.io/openshiftroadshow/mapit@sha256:1366b430c7d4bddf35c7b2d067bc24e8d67ba297dbaacd10e0d80939efd1de9d" in 22.381105774s (22.381128704s including waiting)
   Normal  Created         32s   kubelet            Created container mapit
   Normal  Started         31s   kubelet            Started container mapit
 ----
@@ -671,8 +663,7 @@ oc describe deploy mapit
 ...
   Containers:
    mapit:
-    Image:        quay.io/openshiftroadshow/mapit@sha256:8c7e0349b6a016e3436416f3c54debda
-4594ba09fd34b8a0dee0c4497102590d
+    Image:        quay.io/openshiftroadshow/mapit@sha256:8c7e0349b6a016e3436416f3c54debda4594ba09fd34b8a0dee0c4497102590d
     Ports:        9779/TCP, 8080/TCP, 8778/TCP
     Host Ports:   0/TCP, 0/TCP, 0/TCP
     Liveness:     http-get http://:8080/health delay=30s timeout=1s period=10s

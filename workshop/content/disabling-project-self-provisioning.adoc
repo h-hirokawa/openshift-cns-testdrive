@@ -178,8 +178,7 @@ oc login -u kubeadmin -p {{ KUBEADMIN_PASSWORD }}
 oc patch --type=merge project.config.openshift.io cluster -p '{"spec":{"projectRequestMessage":"Please visit https://ticket.example.com to request a project"}}'
 ----
 
-ここでは、`projectRequestMessage` と `Please visit
-https://ticket.example.com to request a project` というValueを指定しています。
+ここでは、`projectRequestMessage` と `Please visit https://ticket.example.com to request a project` というValueを指定しています。
 
 この新しいメッセージを表示する前に、`apiserver` アプリケーションが変更をロールアウトするのを待つ必要があります。これはロールアウトに時間がかかることがあり、特に忙しいクラスタではそうです。
 

@@ -241,10 +241,8 @@ oc get pods -n openshift-ingress -o wide
 ```
 NAME                              READY   STATUS    RESTARTS   AGE    IP            NODE
                             NOMINATED NODE   READINESS GATES
-router-default-775577dc75-dhwwn   1/1     Running   0          146m   10.131.0.67   ip-10-0-160-234.ap-sou
-theast-1.compute.internal   <none>           <none>
-router-default-775577dc75-pcmxk   1/1     Running   0          146m   10.128.2.97   ip-10-0-135-241.ap-sou
-theast-1.compute.internal   <none>           <none>
+router-default-775577dc75-dhwwn   1/1     Running   0          146m   10.131.0.67   ip-10-0-160-234.ap-southeast-1.compute.internal   <none>           <none>
+router-default-775577dc75-pcmxk   1/1     Running   0          146m   10.128.2.97   ip-10-0-135-241.ap-southeast-1.compute.internal   <none>           <none>
 ```
 
 ルータが動作している `Node` を確認します。
@@ -264,7 +262,7 @@ ip-10-0-160-234.ap-southeast-1.compute.internal   Ready    worker   3h7m   v1.25
 
 ルータオペレータのデフォルトの設定では、`worker` の役割を持つノードを見つけてルータを配置するようになっています。しかし、専用のインフラストラクチャノードを作成したので、ルータインスタンスを `infra` の役割を持つノードに配置するようにオペレータに指示します。
 
-OpenShiftのルーターオペレータは、`ingresses.config.openshift.io`という`CustomResourceDefinitions`(`CRD`)を使用して、クラスタのデフォルトルーティングサブドメインを定義します。
+OpenShiftのルーターオペレータは、`ingresses.config.openshift.io` という `CustomResourceDefinitions`(`CRD`)を使用して、クラスタのデフォルトルーティングサブドメインを定義します。
 
 [source,bash,role="execute"]
 ----
@@ -428,7 +426,7 @@ status:
 oc apply -f {{ HOME_PATH }}/support/ingresscontroller.yaml
 ----
 
-`Warning: resource is missing the kubectl.kubernetes.io/last-applied-config`のようなエラーが表示されるかもしれません。これは正常で、applyを実行すると、リソースに対して "3 way diff merge" が実行されます。ingress controllerはインストール時に作成されたばかりなので、 "last applied" configurationはありません。このコマンドを再実行すると、この警告は表示されなくなるはずです。
+`Warning: resource is missing the kubectl.kubernetes.io/last-applied-config` のようなエラーが表示されるかもしれません。これは正常で、applyを実行すると、リソースに対して "3 way diff merge" が実行されます。ingress controllerはインストール時に作成されたばかりなので、 "last applied" configurationはありません。このコマンドを再実行すると、この警告は表示されなくなるはずです。
 
 実行:
 

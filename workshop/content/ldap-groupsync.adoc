@@ -456,15 +456,11 @@ oc new-app docker.io/siamaksade/mapit
 
 ----
 error: can't lookup images: imagestreamimports.image.openshift.io is forbidden: User "teamuser1
-" cannot create resource "imagestreamimports" in API group "image.openshift.io" in the namespac
-e "app-prod"
-error:  local file access failed with: stat docker.io/siamaksade/mapit: no such file or directo
-ry
-error: unable to locate any images in image streams, templates loaded in accessible projects, t
-emplate files, local docker images with name "docker.io/siamaksade/mapit"
+" cannot create resource "imagestreamimports" in API group "image.openshift.io" in the namespace "app-prod"
+error:  local file access failed with: stat docker.io/siamaksade/mapit: no such file or directory
+error: unable to locate any images in image streams, templates loaded in accessible projects, template files, local docker images with name "docker.io/siamaksade/mapit"
 
-Argument 'docker.io/siamaksade/mapit' was classified as an image, image~source, or loaded templ
-ate reference.
+Argument 'docker.io/siamaksade/mapit' was classified as an image, image~source, or loaded template reference.
 
 The 'oc new-app' command will match arguments to the following types:
 

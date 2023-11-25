@@ -289,14 +289,10 @@ oc get pvc -n openshift-logging
 以下のようなものが見えるはずです。:
 
 ----
-NAME                                         STATUS   VOLUME                                     CAPACITY
-  ACCESS MODES   STORAGECLASS   AGE
-elasticsearch-elasticsearch-cdm-uuxhn2jc-1   Bound    pvc-43d912d1-518d-48eb-abea-9be7814e0513   100Gi
-  RWO            gp3-csi        2m28s
-elasticsearch-elasticsearch-cdm-uuxhn2jc-2   Bound    pvc-1aa0c1f7-d7b3-4d15-9e78-0e917617d691   100Gi
-  RWO            gp3-csi        2m28s
-elasticsearch-elasticsearch-cdm-uuxhn2jc-3   Bound    pvc-a3bc5f96-1ace-4b98-93c9-941aad3e35a7   100Gi
-  RWO            gp3-csi        2m28s
+NAME                                         STATUS   VOLUME                                     CAPACITY  ACCESS MODES   STORAGECLASS   AGE
+elasticsearch-elasticsearch-cdm-uuxhn2jc-1   Bound    pvc-43d912d1-518d-48eb-abea-9be7814e0513   100Gi  RWO            gp3-csi        2m28s
+elasticsearch-elasticsearch-cdm-uuxhn2jc-2   Bound    pvc-1aa0c1f7-d7b3-4d15-9e78-0e917617d691   100Gi  RWO            gp3-csi        2m28s
+elasticsearch-elasticsearch-cdm-uuxhn2jc-3   Bound    pvc-a3bc5f96-1ace-4b98-93c9-941aad3e35a7   100Gi  RWO            gp3-csi        2m28s
 ----		
 
 [Note]

@@ -43,16 +43,11 @@ oc get machine -n openshift-machine-api
 ----
 NAME                                               PHASE     TYPE          REGION           ZONE
     AGE
-cluster-q5kr6-w97nj-master-0                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1
-a   103m
-cluster-q5kr6-w97nj-master-1                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1
-b   103m
-cluster-q5kr6-w97nj-master-2                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1
-c   103m
-cluster-q5kr6-w97nj-worker-ap-southeast-1a-c7k5k   Running   m5a.4xlarge   ap-southeast-1   ap-southeast-1
-a   97m
-cluster-q5kr6-w97nj-worker-ap-southeast-1b-w8p4d   Running   m5a.4xlarge   ap-southeast-1   ap-southeast-1
-b   97m
+cluster-q5kr6-w97nj-master-0                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1a   103m
+cluster-q5kr6-w97nj-master-1                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1b   103m
+cluster-q5kr6-w97nj-master-2                       Running   m5a.xlarge    ap-southeast-1   ap-southeast-1c   103m
+cluster-q5kr6-w97nj-worker-ap-southeast-1a-c7k5k   Running   m5a.4xlarge   ap-southeast-1   ap-southeast-1a   97m
+cluster-q5kr6-w97nj-worker-ap-southeast-1b-w8p4d   Running   m5a.4xlarge   ap-southeast-1   ap-southeast-1b   97m
 ----
 
 
@@ -112,10 +107,8 @@ oc get machines -n openshift-machine-api
 おそらく、`PHASE` が `Provisioning` となっている2つの新しいエントリがすでに存在していると思います。しばらくすると、以下のように表示されます。
 
 ----
-cluster-q5kr6-w97nj-worker-ap-southeast-1c-h444j   Provisioning   m5a.4xlarge   ap-southeast-1   ap-southeast-1
-c   4m51s
-cluster-q5kr6-w97nj-worker-ap-southeast-1c-h9xt9   Provisioning   m5a.4xlarge   ap-southeast-1   ap-southeast-1
-c   4m51s
+cluster-q5kr6-w97nj-worker-ap-southeast-1c-h444j   Provisioning   m5a.4xlarge   ap-southeast-1   ap-southeast-1c   4m51s
+cluster-q5kr6-w97nj-worker-ap-southeast-1c-h9xt9   Provisioning   m5a.4xlarge   ap-southeast-1   ap-southeast-1c   4m51s
 ----
 
 この時点では、バックグラウンドでは自動的にbootstrap処理が行われています。数分後(5分程度)の出力を見てみましょう。
