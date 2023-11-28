@@ -445,23 +445,29 @@ spec:
       - {key: environment, operator: In, values: ["dev"]}
 ```
 
-Namespaceには *default* と入力します。ポリシーはのRemedationは *Inform* を選択します。また、*Label* の項目で、*Values* が*dev* （つまりLocalクラスターを指定している）であることを確認します。
+Nameに *policy-etcdencryption* と入力し、
+Namespaceには *default* と入力します。
 
+* *Name*: `policy-etcdencryption`
 * *Namespace*: `default`
 
-image::images/acm-5-4.png[]
+入力した上で、コピーしたRAWデータをYAMLの欄に貼り付けます。
 
-image::images/acm-5-5.png[]
+image::images/acm6-1.png[]
 
-image::images/acm-5-6.png[]
+3箇所、赤いマークが表示されるので、図にある通りの位置に *namespace: default* の行を追加します。
 
-image::images/acm-5-7.png[]
+image::images/acm6-2.png[]
 
-* すべてが正しいことを確認します。
+正しく追加すると、赤いマークが消えるので、消えたことを確認してください。
 
-* *Submit* をクリックします。
+image::images/acm6-3.png[]
 
-image::images/acm-5-8.png[]
+image::images/acm6-4.png[]
+
+* NEXTをクリックして、*5.Review* ですべてが正しく入力されていることを確認し、*Submit* をクリックします。
+
+image::images/acm6-5.png[]
 
 SubmitをクリックするとPolicyが作成され、スキャンが始まります。
 
