@@ -34,8 +34,7 @@ objects:
     creationTimestamp: null
   spec:
     limits:
-      -
-        type: Container
+      - type: Container
         max:
           cpu: 4000m
           memory: 1024Mi

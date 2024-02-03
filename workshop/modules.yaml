@@ -13,10 +13,6 @@ modules:
     name: ■ MachineSets, Machines, and Nodes
   infra-nodes:
     name: ■ インフラストラクチャノード と Operator
-  odf4:
-    name: ■ OpenShift Data Foundationのデプロイと管理
-  logging:
-    name: ■ OpenShift ログ集約
   ldap-groupsync:
     name: ■ 外部認証プロバイダ(LDAP)の設定
   monitoring-basics:
