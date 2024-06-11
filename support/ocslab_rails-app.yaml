@@ -20,7 +20,7 @@ metadata:
       configuration, and database deployment configuration.
     openshift.io/provider-display-name: Red Hat, Inc.
     openshift.io/support-url: https://access.redhat.com
-    samples.operator.openshift.io/version: 4.2.4
+    samples.operator.openshift.io/version: 4.15.14
     tags: quickstart,ruby,rails
     template.openshift.io/bindable: "false"
   labels:
@@ -52,7 +52,7 @@ objects:
       targetPort: 8080
     selector:
       name: ${NAME}
-- apiVersion: v1
+- apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
     name: ${NAME}
@@ -61,13 +61,13 @@ objects:
     to:
       kind: Service
       name: ${NAME}
-- apiVersion: v1
+- apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
     annotations:
       description: Keeps track of changes in the application image
     name: ${NAME}
-- apiVersion: v1
+- apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
     annotations:
@@ -94,7 +94,7 @@ objects:
           value: ${RUBYGEM_MIRROR}
         from:
           kind: ImageStreamTag
-          name: ruby:2.7-ubi8
+          name: ruby:3.0-ubi8
           namespace: ${NAMESPACE}
       type: Source
     triggers:
@@ -103,7 +103,7 @@ objects:
     - github:
         secret: ${GITHUB_WEBHOOK_SECRET}
       type: GitHub
-- apiVersion: v1
+- apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
     annotations:
@@ -221,7 +221,7 @@ objects:
       targetPort: 5432
     selector:
       name: ${DATABASE_SERVICE_NAME}
-- apiVersion: v1
+- apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
     annotations:
@@ -292,7 +292,7 @@ objects:
         - postgresql
         from:
           kind: ImageStreamTag
-          name: postgresql:12
+          name: postgresql:12-el8
           namespace: ${NAMESPACE}
       type: ImageChange
     - type: ConfigChange

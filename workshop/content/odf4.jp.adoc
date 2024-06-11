@@ -284,7 +284,7 @@ oc get nodes --show-labels | grep ocs | cut -d ' ' -f1
 image::images/ocs/ODF4.9-config-screen-partial3.png[Select encryption and network]
 
 *Encryption* では、何も選択しません。 +
-クラスタ全体、または部分的な暗号化を利用したい場合は、ここでチェックを入れます。今回の Lab では暗号化はしないので、チェックを外したままで構いません。 + 
+クラスタ全体、または部分的な暗号化を利用したい場合は、ここでチェックを入れます。今回の Lab では暗号化はしないので、チェックを外したままで構いません。 +
 （興味のある方は、チェックしてみてどのようなメニューが表示されるか確認されて構いません。*最後はチェックを外すよう注意してください*)
 
 *Network* では、`Default (SDN)` を選択します。 +
@@ -484,10 +484,6 @@ exit
 
 このセクションでは、`ocs-storagecluster-ceph-rbd` *StorageClass* を使ってRWO(ReadWriteOnce) Presistent Volume Claimを作成し、RailsアプリケーションとPostgreSQLデータベースをデプロイします。永続ストレージは、Cephプール `ocs-storagecluster-cephblockpool` にあるCeph RBD (RADOS Block Device) ボリュームです。
 
-ここで利用する OpenShift rails-pgsql-persistentテンプレートをベースに作成したテンプレートファイルを次のリンク先に作成しています。 +
-`https://raw.githubusercontent.com/tutsunom/ocs-training/jp/ocp4ocs4/configurable-rails-app.yaml` +
-このファイルには、PVCが使用するStorageClassをエンドユーザーが指定できる追加のパラメーター `STORAGE_CLASS` が含まれています。ダウンロードして確認してみて下さい。
-
 NOTE: Rails + PostgreSQLのデプロイを開始できるように、前のセクションをすべて完了したことを確認してください。
 
 はじめに新規の**Project**を作成します。
@@ -497,11 +493,18 @@ NOTE: Rails + PostgreSQLのデプロイを開始できるように、前のセ�
 oc new-project my-database-app
 ----
 
+次に、アプリケーション作成用のテンプレートをダウンロードします。
+
+[source,role="execute"]
+---
+curl -O https://raw.githubusercontent.com/hhirokaw/openshift-ops-workshops/ocp4-jp/support/ocslab_rails-app.yaml
+---
+
 そして、`rails-pgsql-persistent` テンプレートを使用して新しいアプリケーションを作成します。
 
 [source,role="execute"]
 ----
-oc new-app -f {{ HOME_PATH }}/support/ocslab_rails-app.yaml -p STORAGE_CLASS=ocs-storagecluster-ceph-rbd -p VOLUME_CAPACITY=5Gi
+oc new-app -f ./ocslab_rails-app.yaml -p STORAGE_CLASS=ocs-storagecluster-ceph-rbd -p VOLUME_CAPACITY=5Gi
 ----
 
 デプロイが始まったら `oc status` コマンドでデプロイの様子を監視できます。
@@ -699,7 +702,7 @@ tmpfs           32566396        0  32566396   0% /proc/scsi
 tmpfs           32566396        0  32566396   0% /sys/firmware
 ----
 
-上の出力にあるように、`/dev/rbd1` という名前のデバイスは `/var/lib/pgsql/data` という名前でマウントされています。このディレクトリを人為的に満杯にします。
+上の出力にあるように、`/dev/rbd0` という名前のデバイスは `/var/lib/pgsql/data` という名前でマウントされています。このディレクトリを人為的に満杯にします。
 
 [source,role="execute"]
 ----
@@ -1191,13 +1194,13 @@ NAME
 postgresql
 ----
 
-CAUTION: 先に進む前に、`postgresql` *PVC* を15Giに拡張していることを確認してください。拡張していない場合は、戻って <<Ceph RBD PVCの拡張>> セクションを完了させてください。 
+CAUTION: 先に進む前に、`postgresql` *PVC* を15Giに拡張していることを確認してください。拡張していない場合は、戻って <<Ceph RBD PVCの拡張>> セクションを完了させてください。
 
 PVCクローンを作成する前に、少なくとも1つの新しい記事を作成し保存して、`postgresql` *PVC* に新しいデータがあることを確認してください。
 
 [source,role="execute"]
 ----
-oc get route rails-pgsql-persistent -n my-database-app -o jsonpath --template="http://{.spec.host}/articles{'\n'}"  
+oc get route rails-pgsql-persistent -n my-database-app -o jsonpath --template="http://{.spec.host}/articles{'\n'}"
 ----
 
 .出力例:
@@ -1311,7 +1314,7 @@ DROP TABLE
 
 [source,role="execute"]
 ----
-oc get route rails-pgsql-persistent -n my-database-app -o jsonpath --template="http://{.spec.host}/articles{'\n'}"  
+oc get route rails-pgsql-persistent -n my-database-app -o jsonpath --template="http://{.spec.host}/articles{'\n'}"
 ----
 
 ブラウザを更新すると、アプリケーションがfailしたことが表示されます。
@@ -1379,7 +1382,7 @@ rails-pgsql-persistent-1-dhwhz      1/1     Running     0          5m10s
 
 [source,role="execute"]
 ----
-oc get route rails-pgsql-persistent -n my-database-app -o jsonpath --template="http://{.spec.host}/articles{'\n'}"  
+oc get route rails-pgsql-persistent -n my-database-app -o jsonpath --template="http://{.spec.host}/articles{'\n'}"
 ----
 
 ブラウザを更新すると、アプリケーションがオンラインに戻り、記事が表示されていることが確認できます。さらに記事を追加することもできます。
@@ -1429,7 +1432,7 @@ metadata:
   name: my-shared-storage-snapshot
   namespace: my-shared-storage
 spec:
-  volumeSnapshotClassName: ocs-storagecluster-cephfsplugin-snapclass 
+  volumeSnapshotClassName: ocs-storagecluster-cephfsplugin-snapclass
   source:
     persistentVolumeClaimName: my-shared-storage
 ----
@@ -1444,7 +1447,7 @@ image::images/ocs/OCP4-OCS4-Snapshot.png[Persistent Volume Claim snapshot using 
 
 .Persistent Volume Claim snapshot configuration
 image::images/ocs/OCP4-OCS4-Snapshot-config.png[Persistent Volume Claim snapshot configuration]
-    
+
 ここで *Create* を選択してスナップショットを実行しても構いません。 +
 YAMLファイルでスナップショットを作成するのであれば、ここでは *Cancel* を選択し、次のコマンドで `my-shared-storage` *PVC* のスナップショットを実行できます。
 
@@ -1809,7 +1812,7 @@ cd {{ HOME_PATH }}/support/photo-album
 ./demo.sh
 ----
 
-NOTE: プロンプトに従ってエンターキーを押して勧めてください。 
+NOTE: プロンプトに従ってエンターキーを押して勧めてください。
 
 .出力例:
 ----
@@ -1865,7 +1868,7 @@ Photo-Albumアプリケーションのデプロイ中に作成した、*OBC* を
 
 [source,role="execute"]
 ----
-oc -n demo get obc 
+oc -n demo get obc
 ----
 .出力例:
 ----
@@ -1877,7 +1880,7 @@ photo-album   openshift-storage.noobaa.io   Bound   4m8s
 
 [source,role="execute"]
 ----
-oc get ob 
+oc get ob
 ----
 .出力例:
 ----
@@ -1933,7 +1936,7 @@ kind: Secret
 *OBC* の詳細を見るには、`photo-album/app.yaml` の冒頭部分を見てください。*DeploymentConfig* の指定セクションで `env:` を見つけると、*ConfigMap* と *Secret* の詳細が環境変数にどのようにマッピングされているかを確認することができます。
 
 [source,role="execute"]
----- 
+----
 cat {{ HOME_PATH }}/support/photo-album/app.yaml | more
 ----
 .出力例:
