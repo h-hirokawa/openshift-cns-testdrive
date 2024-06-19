@@ -496,9 +496,9 @@ oc new-project my-database-app
 次に、アプリケーション作成用のテンプレートをダウンロードします。
 
 [source,role="execute"]
----
-curl -O https://raw.githubusercontent.com/hhirokaw/openshift-ops-workshops/ocp4-jp/support/ocslab_rails-app.yaml
----
+----
+curl -O https://raw.githubusercontent.com/h-hirokawa/openshift-cns-testdrive/ocp4-jp/support/ocslab_rails-app.yaml
+----
 
 そして、`rails-pgsql-persistent` テンプレートを使用して新しいアプリケーションを作成します。
 
